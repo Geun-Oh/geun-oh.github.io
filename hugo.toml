@@ -27,11 +27,6 @@ enableRobotsTXT = true
   url = "/"
   weight = 10
 [[menu.main]]
-  identifier = "posts"
-  name = "Posts"
-  url = "/posts/"
-  weight = 10
-[[menu.main]]
   identifier = "database"
   name = "Database"
   url = "/database/"
