@@ -18,6 +18,8 @@ enableRobotsTXT = true
     Delving deeper into Operating System, Network and Database
     Does not locked in specific programming language, use proper language in each context
     Friendly using Go, Typescript and Zig
+
+    At home, post general purpose programming stuffs like Distributed System, System Programming,,, or everything I'm interested in.
     """
 
   [[params.socialIcons]]
@@ -30,14 +32,8 @@ enableRobotsTXT = true
     name = "cv"
     url = "https://drive.google.com/file/d/1feRPHsii2lctkqZEvZ5VCEkZ7z3ejU3-/view?usp=sharing"
 
-
   env = "production"
 
-[[menu.main]]
-  identifier = "home"
-  name = "Home"
-  url = "/"
-  weight = 10
 [[menu.main]]
   identifier = "database"
   name = "Database"
@@ -52,15 +48,5 @@ enableRobotsTXT = true
   identifier = "os"
   name = "OS"
   url = "/os/"
-  weight = 10
-[[menu.main]]
-  identifier = "cs"
-  name = "CS"
-  url = "/cs/"
-  weight = 10
-[[menu.main]]
-  identifier = "devops"
-  name = "DevOps"
-  url = "/devops/"
   weight = 10
 
