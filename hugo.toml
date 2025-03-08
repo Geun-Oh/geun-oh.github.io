@@ -13,11 +13,11 @@ enableRobotsTXT = true
   [params.homeInfoParams]
     Title = "Welcome"
     Content = """
-    Software Engineer <br />
-    Love tools that streamline processes(like neovim & nix..) <br />
-    Delving deeper into Operating System, Network and Database <br />
-    Does not locked in specific programming language, use proper language in each context <br />
-    Friendly using Go, Typescript and Zig <br />
+    Software Engineer
+    Love tools that streamline processes(like neovim & nix..)
+    Delving deeper into Operating System, Network and Database
+    Does not locked in specific programming language, use proper language in each context
+    Friendly using Go, Typescript and Zig
     """
 
   [[params.socialIcons]]
@@ -26,6 +26,11 @@ enableRobotsTXT = true
   [[params.socialIcons]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/hyeonggeun-oh-760a5b240/"
+  [[params.socialIcons]]
+    name = "cv"
+    url = "https://drive.google.com/file/d/1feRPHsii2lctkqZEvZ5VCEkZ7z3ejU3-/view?usp=sharing"
+
+
   env = "production"
 
 [[menu.main]]
