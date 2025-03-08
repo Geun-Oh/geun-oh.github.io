@@ -1,0 +1,83 @@
+:root {
+    --theme: #fff;
+    /* --entry: #cfcfff; */
+    /* --primary: rgba(0, 0, 106, 0.88);
+    --secondary: rgba(0, 0, 80, 0.78);
+    --tertiary: rgba(0, 0, 106, 0.16);
+    --content: rgba(0, 0, 60, 0.88); */
+    /* --hljs-bg: #1c1d21;
+    --code-bg: #f5f5f5;
+    --border: #eee; */
+    --font-family: "Baskerville", "Libre Baskerville", "Times New Roman", Times, serif;
+    --border: #fff;
+    --content: #000;
+}
+
+.dark {
+    --theme: #000;
+    --entry: #000;
+    /* --primary: rgba(0, 0, 106, 0.88);
+    --secondary: rgba(0, 0, 80, 0.78);
+    --tertiary: rgba(0, 0, 106, 0.16);
+    --content: rgba(0, 0, 60, 0.88); */
+    /* --hljs-bg: #1c1d21;
+    --code-bg: #f5f5f5;
+    --border: #eee; */
+    --border: #000;
+}
+
+body {
+    font-size: 14px;
+    font-family: var(--font-family);
+}
+
+.list {
+    background: white;
+}
+
+.entry-link {
+    border: none;
+    color: white;
+}
+
+.entry-content {
+    font-size: 0.8rem;
+}
+
+.entry-content > pre > code {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    color: var(--content);
+}
+
+.first-entry .entry-content {
+    font-size: 0.8rem;
+}
+
+.first-entry .entry-header h1 {
+    font-size: 1.5rem;
+}
+
+.entry-header h2 {
+    font-size: 1.2rem;
+}
+
+.post-title {
+    font-size: 2rem;
+}
+
+.post-content h1 {
+    font-size: 1.8rem;
+}
+
+.post-content h2 {
+    font-size: 1.5rem;
+}
+
+.post-content h3 {
+    font-size: 1.2rem;
+}
+
+.post-entry {
+    padding: 0;
+}
