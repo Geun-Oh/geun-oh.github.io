@@ -12,6 +12,7 @@ enableRobotsTXT = true
 [params]
   [params.homeInfoParams]
     Title = "Welcome"
+    Content = "Software Engineer \n Love tools that streamline processes(like neovim & nix..) \n Delving deeper into Operating System, Network and Database \n Does not locked in specific programming language, use proper language in each context \n Friendly using Go, Typescript and Zig"
   
   [[params.socialIcons]]
     name = "github"
