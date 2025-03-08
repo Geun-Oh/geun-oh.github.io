@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Database 1 | Nohv</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+데이터베이스 수강하기 전에 공부해두기
+알고 있는 사항
+
+SQLD자격증을 취득한 정도의 SQL 문법 이해도
+트랜잭션, ACID, 트랜잭션 격리 수준 등
+
+공부할 사항
+
+데이터베이스 엔진을 만들기 위해서 필요한 것들
+데이터베이스 엔진 구축하기
+
+메모리와 디스크 간의 데이터 관리
+데이터베이스 시스템은 일반적으로 메모리 (RAM)과 디스크 (HDD/SSD)를 함께 사용하여 데이터 관리.
+- 메모리: 고속 액세스가 필요한 임시 데이터를 저장함. 예를 들어, 자주 액세스되는 데이터 페이지를 메모리에 캐싱하여 데이터베이스의 응답을 높이는 등의 처리 가능.
+- 디스크: 영구 데이터 저장에 사용. 디스크에 저장된 데이터는 시스템이 재시작되어도 유지.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/database/database-1/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5af69be6bb334dea411b841952ea2c4a3997158adca03033089abb36903fd526.css" integrity="sha256-Wvab5rszTepBG4QZUuosSjmXFYrcoDAzCJq7NpA/1SY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/database/database-1/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Nohv (Alt + H)">Nohv</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/database/" title="Database">
+                    <span>Database</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/network/" title="Network">
+                    <span>Network</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/os/" title="OS">
+                    <span>OS</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Database 1
+    </h1>
+    <div class="post-meta"><span title='2024-08-30 16:53:28 +0900 KST'>August 30, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><blockquote>
+<p>데이터베이스 수강하기 전에 공부해두기</p>
+<p>알고 있는 사항</p>
+<ol>
+<li>SQLD자격증을 취득한 정도의 SQL 문법 이해도</li>
+<li>트랜잭션, ACID, 트랜잭션 격리 수준 등</li>
+</ol>
+<p>공부할 사항</p>
+<ol>
+<li>데이터베이스 엔진을 만들기 위해서 필요한 것들</li>
+<li>데이터베이스 엔진 구축하기</li>
+</ol></blockquote>
+<h3 id="메모리와-디스크-간의-데이터-관리">메모리와 디스크 간의 데이터 관리<a hidden class="anchor" aria-hidden="true" href="#메모리와-디스크-간의-데이터-관리">#</a></h3>
+<p>데이터베이스 시스템은 일반적으로 메모리 (RAM)과 디스크 (HDD/SSD)를 함께 사용하여 데이터 관리.
+- 메모리: 고속 액세스가 필요한 임시 데이터를 저장함. 예를 들어, 자주 액세스되는 데이터 페이지를 메모리에 캐싱하여 데이터베이스의 응답을 높이는 등의 처리 가능.
+- 디스크: 영구 데이터 저장에 사용. 디스크에 저장된 데이터는 시스템이 재시작되어도 유지.</p>
+<h3 id="데이터-저장-구조">데이터 저장 구조<a hidden class="anchor" aria-hidden="true" href="#데이터-저장-구조">#</a></h3>
+<p>데이터베이스는 데이터를 디스크에 효율적으로 저장하기 위해 특별한 구조 사용. 이를 주로 <strong>페이지</strong>와 <strong>블록</strong>의 단위로 나눈다.</p>
+<pre><code>- 페이지: 한 페이지 당 4KB~16KB 정도 되는 고정 크기의 블록을 의미함. 페이지는 데이터의 기본 단위로 사용되며, 메모리와 디스크 간의 데이터 전송 또한 페이지 단위로 이루어진다.
+- 블록: 디스크에서 데이터를 저장하는 물리적 단위. 데이터베이스는 디스크 블록과 데이터베이스 페이지를 매핑해 데이터 관리.
+</code></pre>
+<h3 id="데이터의-논리적-저장-구조">데이터의 논리적 저장 구조<a hidden class="anchor" aria-hidden="true" href="#데이터의-논리적-저장-구조">#</a></h3>
+<p>관계형 데이터베이스에서는 데이터를 <strong>테이블</strong>의 형태로 저장함. 테이블은 <strong>행</strong>과 <strong>열</strong>로 구성됨.</p>
+<h3 id="데이터-저장-방식">데이터 저장 방식<a hidden class="anchor" aria-hidden="true" href="#데이터-저장-방식">#</a></h3>
+<p>데이터베이스에서 데이터를 저장하는 방식은 데이터베이스 엔진 설계에 따라 달라짐. 일반적으로 두 개의 방식을 사용.</p>
+<ol>
+<li>행 기반 저장(Row-oriented Storage)
+<ul>
+<li>모든 열의 데이터를 각 행에 연속적으로 저장한다.</li>
+<li>모든 열을 포함한 개별 행에 대한 액세스가 빠르다. 특정 행의 모든 데이터를 한 번에 가져와야하는 경우 유용하다.</li>
+<li>전통적인 관계형 데이터베이스 시스템의 경우 행 기반이다(MySQL, PostgreSQL 등).</li>
+</ul>
+</li>
+</ol>
+<p>예시</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>| ID | Name   | Age |
+</span></span><span style="display:flex;"><span>|----|--------|-----|
+</span></span><span style="display:flex;"><span>| 1  | Alice  | 30  |
+</span></span><span style="display:flex;"><span>| 2  | Bob    | 25  |
+</span></span><span style="display:flex;"><span>| 3  | Charlie| 35  |
+</span></span></code></pre></div><p>위 경우, 데이터는 디스크에 다음과 같이 저장된다.
+<code>[1, Alice, 30], [2, Bob, 25], [3, Charlie, 35]</code></p>
+<ol start="2">
+<li>열 기반 저장(Column-oriented Storage)
+<ul>
+<li>동일한 열의 모든 데이터를 연속적으로 저장한다.</li>
+<li>특정 열의 데이터를 빠르게 접근할 수 있어 분석 작업이나 집계 쿼리 등에서 효율적이다.</li>
+<li>분석용 데이터베이스 시스템은 열 기반 저장 방식을 사용한다(Cassandra, Parquet 등).</li>
+</ul>
+</li>
+</ol>
+<p>위와 동일한 예시에서, 데이터는 디스크에 다음과 같이 저장된다.
+<code>[1, 2, 3], [Alice, Bob, Charlie], [30, 25, 35]</code></p>
+<h3 id="메모리-할당-및-데이터-저장">메모리 할당 및 데이터 저장<a hidden class="anchor" aria-hidden="true" href="#메모리-할당-및-데이터-저장">#</a></h3>
+<p>데이터베이스가 데이터를 특정 경로의 메모리 공간에 할당하고 데이터를 저장하는 과정은 다음과 같다.</p>
+<ol>
+<li>
+<p><strong>디스크 페이지 할당</strong>: 데이터베이스는 데이터를 저장할 공간을 디스크에 페이지 단위로 할당한다. 이때 페이지는 특정 크기의 메모리 블록을 나타낸다.</p>
+</li>
+<li>
+<p><strong>메모리 버퍼 관리</strong>: 데이터베이스는 메모리 내에서 데이터를 관리하기 위해 버퍼 풀을 사용한다. 버퍼 풀은 자주 사용되는 데이터 페이지를 메모리에 캐싱하여 디스크 접근을 최소화한다.</p>
+</li>
+<li>
+<p><strong>데이터 쓰기 및 읽기</strong>:</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>쓰기: 세로운 데이터를 삽입하거나 기존 데이터를 업데이트할 때, 데이터는 메모리에 먼저 기록된 후(Buffer Flush) 주기적으로 디스크에 기록된다.</p>
+</li>
+<li>
+<p>읽기: 데이터베이스는 필요한 데이터 페이지를 버퍼 풀에서 찾고, 없다면 디스크에서 페이지를 읽어온다. 이 페이지의 경우 메모리에 캐싱되어 이후 접근 속도를 높인다.</p>
+</li>
+</ul>
+<ol start="4">
+<li><strong>파일 포맷 및 인덱스</strong>: 데이터베이스는 데이터를 저장할 때 효율적인 검색을 위해 인덱스를 함께 관리한다. 인덱스는 데이터의 특정 열을 기준으로 정렬된 정보로, 데이터를 빠르게 검색하는 데 사용한다.</li>
+</ol>
+<hr>
+<p>이외에도, 데이터베이스는 여러 저장 방식을 지원한다.</p>
+<ol>
+<li>하이브리드 저장방식</li>
+</ol>
+<p>하이브리드 저장방식은 행 기반과 열 기반 저장 방식을 합친 접근방식이다. 데이터의 일부는 행 기반으로, 다른 일부는 열 기반으로 저장하여 각 방식의 장점을 취했다.</p>
+<p>SAP HANA, MemSQL 등이 그 예시.</p>
+<p>장점</p>
+<ul>
+<li>트랜잭션 처리(OLTP)와 분석 처리(OLAP)를 한 시스템에서 최적화가 가능하다.</li>
+<li>데이터 접근 패턴에 따라 유연하게 저장방식 선택이 가능하다.</li>
+</ul>
+<ol start="2">
+<li>LSM-트리(Log-Structured Merge-Tree) 저장방식</li>
+</ol>
+<p>주로 쓰기 성능 최적화에 중점을 둔다. 새로운 데이터를 메모리에 쓰고, 일정 조건이 충족되면 데이터를 디스크로 병합하여 저장한다.</p>
+<p>Cassandra, RocksDB, LevelDB등이 그 예시.</p>
+<p>장점</p>
+<ul>
+<li>쓰기 작업이 빠르고, 쓰기 부하가 높은 애플리케이션에 적합하다.</li>
+<li>데이터의 삭제 및 업데이트가 빈번하지 않은 워크로드에 유리하다.</li>
+<li>효율적인 디스크 공간 활용이 가능함.</li>
+</ul>
+<p>이외에도 객체 저장(Object Storage), 문서 저장(Document Storage), 그래프 저장(Graph Storage) 등이 존재한다. 나머지는 각자.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">Nohv</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

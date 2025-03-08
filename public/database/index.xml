@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Databases on Nohv</title>
+    <link>http://localhost:1313/database/</link>
+    <description>Recent content in Databases on Nohv</description>
+    <generator>Hugo -- 0.145.0</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 08 Mar 2025 21:28:01 +0900</lastBuildDate>
+    <atom:link href="http://localhost:1313/database/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Zig RDBMS Lexer</title>
+      <link>http://localhost:1313/database/zig-rdbms-lexer/</link>
+      <pubDate>Sat, 08 Mar 2025 21:28:01 +0900</pubDate>
+      <guid>http://localhost:1313/database/zig-rdbms-lexer/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Zig의 allocator와 comptime에 대한 이해를 더하기 위해, facebook의 RocksDB를 기반으로 하는 RDBMS를 구성한다.
+가장 먼저 SQL문을 분해하고 분류하는 Lexer를 제작한다.
+모든 코드는 &lt;a href=&#34;https://notes.eatonphil.com/zigrocks-sql.html&#34;&gt;https://notes.eatonphil.com/zigrocks-sql.html&lt;/a&gt; 레포지토리를 기반으로 하며,
+추가적인 기능을 구현하는 내용을 포함한다.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Ready for&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;일단 가독성 및 효율성을 위한 유틸리티를 제작한다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-zig&#34; data-lang=&#34;zig&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; String &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;u8&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; Error &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; String;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; Result(&lt;span style=&#34;color:#66d9ef&#34;&gt;comptime&lt;/span&gt; T&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;union&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;enum&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        val&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; T,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        err&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; Error,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    };
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;lexer&#34;&gt;Lexer&lt;/h1&gt;
+&lt;p&gt;Lexer는 SQL문을 분석하는 도구를 말한다. SQL문장들을 Token으로 분리하는 Lexical analysis를 수행한다. 추후 이를 Parser에게 넘겨줄 수 있는 Token 배열의 형태로 만드는 일을 진행한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Db Block Io</title>
+      <link>http://localhost:1313/database/db-block-io/</link>
+      <pubDate>Mon, 11 Nov 2024 22:12:12 +0900</pubDate>
+      <guid>http://localhost:1313/database/db-block-io/</guid>
+      <description>&lt;h2 id=&#34;테이블-스캔-방식에-따른-db-block-io-전략&#34;&gt;테이블 스캔 방식에 따른 DB Block IO 전략&lt;/h2&gt;
+&lt;p&gt;데이터베이스가 쿼리에서 요구하는 데이터를 검색하기 위해 테이블에 접근하는 방식의 종류는 다양하다.&lt;/p&gt;
+&lt;p&gt;가장 주요하고 크게는 인덱스를 활용하는지에 따라 갈리고, 인덱스를 어떤 방식으로 스캔할지에 대해서도 종류가 나뉜다.&lt;/p&gt;
+&lt;p&gt;각 스캔 방식들은 내부 작동 방식에 따라 서로 다른 Block IO 전략을 가지게 되는데, 이러한 내부 작동의 차이를 이해하면 왜 DB가 해당 방식을 사용했는지에 대한 이해도를 높일 수 있다.&lt;/p&gt;
+&lt;h3 id=&#34;block-io&#34;&gt;Block IO&lt;/h3&gt;
+&lt;p&gt;데이터베이스에서 IO를 하는 단위를 Block으로 하기 때문에, DB 엔진에 따라 1회의 IO에서 8KB내지 16KB의 데이터를 불러온다. 이러한 IO의 단위가 Block이 되어 데이터를 읽어와 버퍼 캐시에 적재하는 과정을 Block IO라고 한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 10</title>
+      <link>http://localhost:1313/database/database-10/</link>
+      <pubDate>Fri, 11 Oct 2024 23:21:40 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-10/</guid>
+      <description>&lt;h2 id=&#34;rewrite-dbms-code&#34;&gt;Rewrite DBMS code&lt;/h2&gt;
+&lt;p&gt;To get SQL queries by input and parse it to operate logics based on it.&lt;/p&gt;
+&lt;p&gt;optimizer.rs&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;crate&lt;/span&gt;::database::Database;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; std::error::Error;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#[derive(Debug)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;enum&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ExecutionStep&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Scan(String),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Filter(String),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Project(Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Insert(String, Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Optimizer&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    database: &lt;span style=&#34;color:#a6e22e&#34;&gt;Database&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;impl&lt;/span&gt; Optimizer {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;new&lt;/span&gt;(database: &lt;span style=&#34;color:#a6e22e&#34;&gt;Database&lt;/span&gt;) -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Self&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Optimizer { database }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    } 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;optimize&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;self, query: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;str&lt;/span&gt;) -&amp;gt; Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;ExecutionStep&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; query.to_lowercase().starts_with(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;select&amp;#34;&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table_name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; query.split_whitespace().nth(&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;).unwrap_or(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;).to_string();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            vec![
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Scan(table_name.clone()),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Project(vec![&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;*&amp;#34;&lt;/span&gt;.to_string()]),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            ]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; query.to_lowercase().starts_with(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;insert&amp;#34;&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; parts: Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;str&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; query.split_whitespace().collect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table_name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; parts[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;].to_string(); 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; values &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; parts[&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;].trim_matches(&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; c &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;(&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; c &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;)&amp;#39;&lt;/span&gt;).split(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                .map(&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;s&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; s.trim().trim_matches(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#34;&amp;#39;&lt;/span&gt;).to_string())
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                .collect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            vec![ExecutionStep::Insert(table_name, values)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            vec![]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;execute_plan&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; self, plan: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;[ExecutionStep]) -&amp;gt; Result&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt;, Box&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;dyn&lt;/span&gt; Error&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Vec::new();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; step &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; plan {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;match&lt;/span&gt; step {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Scan(table_name) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self.database.get_table(table_name);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; table.rows.clone();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Project(columns) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; columns[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;*&amp;#34;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Insert(table_name, values) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self.database.get_table_mut(table_name);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    table.insert(values.clone()).expect(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;format!(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Insert Operation Failed&amp;#34;&lt;/span&gt;));
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Filter(_) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Ok(result)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Extract query_optimizer logic from sql_parser.
+interprete sql query by reading fisrt keyword.
+(do not use sql parser functions)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 9</title>
+      <link>http://localhost:1313/database/database-9/</link>
+      <pubDate>Thu, 10 Oct 2024 23:37:24 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-9/</guid>
+      <description>&lt;h2 id=&#34;database-storing-structure&#34;&gt;Database storing structure&lt;/h2&gt;
+&lt;h3 id=&#34;tablespace&#34;&gt;Tablespace&lt;/h3&gt;
+&lt;p&gt;Tablespace is a space that storing real data in database object.
+It is a physical part of database, allocates repositories to all DBMSs that are managed by segment.&lt;/p&gt;
+&lt;p&gt;It is for managing massive datas with stable restoring mechanism, and also for disk i/o opt.&lt;/p&gt;
+&lt;h3 id=&#34;page&#34;&gt;Page&lt;/h3&gt;
+&lt;p&gt;In MySQL, there are many types of datas.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Row in Table&lt;/li&gt;
+&lt;li&gt;Index&lt;/li&gt;
+&lt;li&gt;Undo Log&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;etc..&lt;/p&gt;
+&lt;p&gt;Row: Real Data that are managed by MySQL.
+Index: For efficient row searching.
+Undo Log: Datas for transaction operation.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 8</title>
+      <link>http://localhost:1313/database/database-8/</link>
+      <pubDate>Tue, 08 Oct 2024 23:17:41 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-8/</guid>
+      <description>&lt;h2 id=&#34;analyze-sqlpest-file&#34;&gt;Analyze sql.pest file&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;.pest&lt;/code&gt; file format is for files that are used for parser generator names &lt;strong&gt;Pest&lt;/strong&gt;. It usually used in rust ecosystem, appropriate for define various language syntaxes and operates syntax analysis.&lt;/p&gt;
+&lt;p&gt;And so, Let&amp;rsquo;s break down my &lt;code&gt;sql.pest&lt;/code&gt; file.&lt;/p&gt;
+&lt;h2 id=&#34;general-overview&#34;&gt;General Overview&lt;/h2&gt;
+&lt;p&gt;sql.pest&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-pest&#34; data-lang=&#34;pest&#34;&gt;/////// LIMITATIONS OF CURRENT GRAMMAR
+// quote strings only allow certain characters
+// column_names, etc. are defined as only allowing alpha 
+
+//////// PUNCTUATIONS
+// curly braces
+open_brace = { &amp;#34;{&amp;#34; }
+close_brace = { &amp;#34;}&amp;#34; }
+open_paren = { &amp;#34;(&amp;#34; }
+close_paren = { &amp;#34;)&amp;#34; }
+comma = { &amp;#34;,&amp;#34; }
+star = { &amp;#34;*&amp;#34; }
+quote = { &amp;#34;\&amp;#34;&amp;#34; }  // a single quote
+
+//////// SPECIAL
+WHITESPACE = _{ &amp;#34; &amp;#34; }
+
+///////// DATATYPE
+int = { &amp;#34;INT&amp;#34; }
+text = { &amp;#34;TEXT&amp;#34; }
+
+///////// VALUE
+int_val = @{ (&amp;#34;+&amp;#34; | &amp;#34;-&amp;#34;)? ~ ASCII_DIGIT+ }
+// legal characters allowed in string
+// text parsing will require more thought
+char = ${ ASCII_ALPHANUMERIC | &amp;#34;+&amp;#34; | &amp;#34;-&amp;#34; | &amp;#34;.&amp;#34; }
+quoted_text_val = { quote ~ char* ~ quote }
+literal_text_val = @{ char+ }
+value = { (int_val | quoted_text_val | literal_text_val) }
+
+///////// SQL KEYWORDS/IDENTIFIERS
+// keywords will be case insensitive
+// case insensitivity is specified through &amp;#39;^&amp;#39;
+create_kw = { ^&amp;#34;CREATE&amp;#34; }
+table_kw = { ^&amp;#34;TABLE&amp;#34; }
+select_kw = { ^&amp;#34;SELECT&amp;#34; }
+from_kw = {  ^&amp;#34;FROM&amp;#34; }
+insert_kw = { ^&amp;#34;INSERT&amp;#34; }
+into_kw = { ^&amp;#34;INTO&amp;#34; }
+values_kw = { ^&amp;#34;VALUES&amp;#34; }
+
+table_name = { (ASCII_ALPHA)+ }
+
+///////// CREATE TABLE DEFINITION
+column_name = ${ (ASCII_ALPHA)+ }
+
+column_type = @{ ( int | text ) }
+column_def = { column_name ~ column_type }
+
+table_fields = { (column_def ~ comma)* ~ (column_def)? }
+
+create_table_stmnt = { create_kw ~ table_kw ~ table_name ~
+                       (open_brace ~ table_fields ~ close_brace) }
+
+////////// SELECT STATEMENT
+
+select_stmnt = { select_kw ~ star ~ from_kw ~ table_name }
+
+////////// INSERT STATMENT
+
+column_names = { (column_name ~ comma)* ~ (column_name)? }
+values = { (value ~ comma)* ~ (value)? }
+
+insert_stmnt = { insert_kw ~ into_kw ~ table_name ~ ( open_paren ~ column_names ~ close_paren ) ~
+                 values_kw ~ ( open_paren ~ values ~ close_paren ) }
+
+insert_grammar = { SOI ~ insert_kw ~ into_kw ~ table_name ~ ( open_paren ~ column_names ~ close_paren ) ~
+                  values_kw ~ ( open_paren ~  values ~ close_paren ) ~ EOI }
+
+////////// UNIFIED GRAMMAR
+
+sql_grammar = {SOI ~ (create_table_stmnt | select_stmnt | insert_stmnt ) ~ EOI }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The file defines a grammar for parsing a subset of SQL that focuses on basic commands like &lt;code&gt;CRAETE&lt;/code&gt;, &lt;code&gt;TABLE&lt;/code&gt;, &lt;code&gt;SELECT&lt;/code&gt;, and &lt;code&gt;INSERT&lt;/code&gt;.
+This grammar allows only specified characters, for example, limits strings wrapped with double quote, or enforces &lt;code&gt;column_names&lt;/code&gt; to allow alphabet characters only.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 7</title>
+      <link>http://localhost:1313/database/database-7/</link>
+      <pubDate>Tue, 08 Oct 2024 01:27:48 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-7/</guid>
+      <description>&lt;h2 id=&#34;sql-optimization&#34;&gt;SQL Optimization&lt;/h2&gt;
+&lt;p&gt;Before executing SQL, subdivide optimization process is as follows.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Parsing SQL&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;SQL Parser parses SQL when parser gets it from user. To summmarize SQL parsing process, it is as belows.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Generate parsing tree: generate parsing tree from whole SQL code by analyzing it into individual components.&lt;/li&gt;
+&lt;li&gt;Checking syntax: Checks if it has inaccurate syntax error. Like using unavailable or missing keywords, written with wrong sequence&amp;hellip;etc.&lt;/li&gt;
+&lt;li&gt;Checking semantic: Check if it has inaccurate semantic error. If it used table or column that does not exist. Or has right permissions to use the target object.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Optimize SQL&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The next step is SQL optimization, and the Optimizer takes the role. SQL Optimizer selects one efficient way from various execution path that generated with precollected statistic information of systems and objects. It&amp;rsquo;s the most important core engine that determines database performance.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 6</title>
+      <link>http://localhost:1313/database/database-6/</link>
+      <pubDate>Sun, 08 Sep 2024 22:54:19 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-6/</guid>
+      <description>&lt;h3 id=&#34;데이터베이스-시스템-구현&#34;&gt;데이터베이스 시스템 구현&lt;/h3&gt;
+&lt;p&gt;세부 구현을 시작한다.&lt;/p&gt;
+&lt;p&gt;먼저, 마운트된 공간에 데이터를 적재하고, 해당 데이터를 조회하는 기본적인 기능을 수행하도록 Table 구조체를 작성한다.&lt;/p&gt;
+&lt;p&gt;예시 코드를 작성할 때에는 마운트 포인트를 &lt;code&gt;pwd + /data&lt;/code&gt; 로 임의 설정했다.
+내부에 테이블 종류에 따라 폴더를 추가 구성하고, 해당 폴더 내부에 &lt;code&gt;.schema&lt;/code&gt; 파일을 생성하여 schema 구조를 정의하고, &lt;code&gt;.csv&lt;/code&gt; 확장자로 데이터를 적재했다.
+데이터 저장 형태는 여러 형태가 권장되고 있었는데, 별도의 예시를 찾기 어려워 테이블 구조를 저장하고 관리하기 좋은 csv 형태를 선택했다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 5</title>
+      <link>http://localhost:1313/database/database-5/</link>
+      <pubDate>Sun, 08 Sep 2024 02:07:45 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-5/</guid>
+      <description>&lt;h3 id=&#34;transparent-data-encryption&#34;&gt;Transparent data encryption&lt;/h3&gt;
+&lt;p&gt;TDE는 MS, IBM, Oracle 에서 데이터베이스 파일 암호화를 위해 적용하는 암호화 기술이다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Oracle이 쓰므로 MySQL도 동일하게 TDE를 사용한다.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;TDE는 파일 레벨로 암호화를 진행하기 때문에, 일반적으로 테이블 단위의 암호화를 수행한다.&lt;/p&gt;
+&lt;p&gt;TDE는 휴지 상태의 데이터 보호 문제를 해결하며, 하드 드라이브와 궁극적으로는 백업 미디어에서 데이터베이스를 암호화한다.&lt;/p&gt;
+&lt;p&gt;조금은 크고 무거운 단위의 파일들을 암호화하는 것에 집중되는 듯 하다.&lt;/p&gt;
+&lt;h3 id=&#34;application-level-data-encryption&#34;&gt;Application level data encryption&lt;/h3&gt;
+&lt;p&gt;데이터베이스에 데이터를 저장하기 전에 애플리케이션에서 암호화를 수행하여 저장하는 방법이다. 이 방법은 데이터베이스는 데이터를 받아 적재하는 역할만 수행하고, 애플리케이션이 암호화 및 복호화 작업을 수행하는 방식이다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 4</title>
+      <link>http://localhost:1313/database/database-4/</link>
+      <pubDate>Sat, 07 Sep 2024 18:59:35 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-4/</guid>
+      <description>&lt;h3 id=&#34;mntdata와-mntlog-가-다른-디스크에-마운트됨을-확인하기&#34;&gt;/mnt/data와 /mnt/log 가 다른 디스크에 마운트됨을 확인하기&lt;/h3&gt;
+&lt;p&gt;단순히 경로를 표시하는 것만으로는 확실하게 물리적 격리가 이루어지고 있는지 확인할 수 없다.
+각 마운트 지점이 물리적으로 서로 다른 디스크에 매핑되어 있는지 확인하려면, 다음과 같은 명령어를 사용한다.&lt;/p&gt;
+&lt;h4 id=&#34;1-df&#34;&gt;1. &lt;code&gt;df&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;df&lt;/code&gt; 는 파일 시스템의 디스크 사용량을 확인하는 데 사용되며, 각 마운트 포인트가 어떤 디스크에 연결되어 있는지 확인 가능하다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df -h /mnt/data /mnt/log
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;해당 명령어 실행 시 아래와 같이 &lt;code&gt;/mnt/data&lt;/code&gt;와 &lt;code&gt;/mnt/log&lt;/code&gt; 가 각각 어떤 디스크와 디바이스에 마운트되어 있는지 확인할 수 있다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 3</title>
+      <link>http://localhost:1313/database/database-3/</link>
+      <pubDate>Thu, 05 Sep 2024 18:29:23 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-3/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;MySQL의 사례를 기반으로 설명하는 경우가 있음.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h3 id=&#34;논리적-격리와-물리적-격리&#34;&gt;논리적 격리와 물리적 격리&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;1. 물리적 격리&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;물리적 격리는 데이터베이스의 데이터 파일을 별도의 물리적 디스크나 저장 장치에 분리하여 저장하는 방법이다.
+MySQL에서는 다음과 같은 방식으로 물리적 격리를 구현하고 있다고 한다(물론 다른 옵션이 많을 듯).&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;데이터 파일과 로그 파일 분리: MySQL데이터베이스는 데이터파일다 로그 파일을 사용한다. 성능 최적화를 위헤 데이터 파일과 로그 파일을 서로 다른 물리적 디스크에 저장하는 것이 일반적이다. 이를 통해 디스크 I/O를 분산시켜 성능을 향상시킬 수 있다.&lt;/li&gt;
+&lt;li&gt;파일시스템 마운트 포인트: MySQL의 데이터 디렉토리를 별도의 디스크에 마운트된 파일 시스템에 설정하여 데이터 파일과 로그 파일을 저장 가능하다. =&amp;gt; 이게 왜 물리? 각기 다른 디스크를 의미하는 걸지도&amp;hellip;!&lt;/li&gt;
+&lt;li&gt;RAID구성: 성능 및 데이터 보호를 위해 RAID구성을 사용하는 것도 물리적 격리의 한 형태이다. &lt;a href=&#34;https://devocean.sk.com/blog/techBoardDetail.do?ID=163608&#34;&gt;RAID&lt;/a&gt;를 통해 데이터가 여러 디스크에 걸쳐 저장되므로 장애 발생 시 데이터 손실을 최소화하고 성능을 최적화할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;2. 논리적 격리&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 2</title>
+      <link>http://localhost:1313/database/database-2/</link>
+      <pubDate>Sat, 31 Aug 2024 23:36:53 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-2/</guid>
+      <description>&lt;h3 id=&#34;데이터베이스-시스템-제작에-필요한-것들&#34;&gt;데이터베이스 시스템 제작에 필요한 것들&lt;/h3&gt;
+&lt;p&gt;데이터베이스 시스템을 제작하기 위해서는 다음과 같은 사항들이 필요하다.&lt;/p&gt;
+&lt;h4 id=&#34;1-기본-아키텍쳐-설계&#34;&gt;1. 기본 아키텍쳐 설계&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;스토리지 엔진: 데이터 저장 및 검색을 위한 엔진 설계. 여러 인덱싱 기술과 자료구조를 사용하여 구현함.&lt;/li&gt;
+&lt;li&gt;데이터 파일 관리: 데이터를 저장하기 위한 파일 포맷과 파일 시스템 상에서의 효율적인 관리 방법을 설계해야 함.&lt;/li&gt;
+&lt;li&gt;버퍼 관리: 데이터 파일과 메모리 간의 데이터를 효율적으로 교환하기 위한 버퍼 풀 관리가 필요함.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;2-sql-파서-및-실행기&#34;&gt;2. SQL 파서 및 실행기&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;SQL파서: SQL을 파싱하여 필요한 정보를 추출한다. 이후 이를 쿼리 실행기에 전달하여 기능을 수행한다.&lt;/li&gt;
+&lt;li&gt;쿼리 최적화기: 효율적인 실행 계획 생성을 위해 쿼리를 최적화하는 알고리즘을 설계한다.&lt;/li&gt;
+&lt;li&gt;쿼리 실행기: 최적화된 실행 계획에 따라 실제로 데이터를 조회하거나 변경하는 모듈.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;3-트랜잭션-관리&#34;&gt;3. 트랜잭션 관리&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;ACID 속성 구현: 트랜잭션의 가장 기본적인 원칙을 보장하는 메커니즘 설계 필요.&lt;/li&gt;
+&lt;li&gt;Lock 구현: 임계 영역 내 데이터의 무결성 보장을 위해 다중 접근을 통재하는 매커니즘 구현 필요.&lt;/li&gt;
+&lt;li&gt;저널링 및 로깅: 트랜잭션 기록을 통한 데이터 복구 메커니즘을 위한 로그 시스템 설계 필요.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;4-보안-및-사용자-관리&#34;&gt;4. 보안 및 사용자 관리&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;인증: 사용자 인증을 위한 메커니즘 설계(Oauth or Kerberos).&lt;/li&gt;
+&lt;li&gt;권한 부여: 사용자의 데이터베이스 객체에 대한 접근 권한 관리를 위한 권한 부여시스템 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;5-네트워크-프로토콜-및-통신&#34;&gt;5. 네트워크 프로토콜 및 통신&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Client-Server 통신 프로토콜: 클라이언트와 서버 간 데이터베이스 쿼리와 결과를 주고받기 위한 프로토콜 설계.&lt;/li&gt;
+&lt;li&gt;연결 관리: 다수의 클라이언트가 접속 가능하도록 연결 풀링 및 연결 관리 시스템 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;6-복제-및-백업&#34;&gt;6. 복제 및 백업&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;데이터 복제: 고가용성을 위한 데이터베이스 복제 메커니즘 구현.&lt;/li&gt;
+&lt;li&gt;백업 및 복구: 데이터 손실 시 복구할 수 있는 백업 전략과 복구 절차 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;7-운영-및-모니터링-도구&#34;&gt;7. 운영 및 모니터링 도구&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;모니터링: 데이터베이스의 성능과 상태 모니터링을 위한 도구 개발&lt;/li&gt;
+&lt;li&gt;로깅 및 감사: 데이터베이스의 활동 전체를 기록하여 보안을 강화하고 문제를 해결할 수 있는 시스템 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;8-성능-최적화&#34;&gt;8. 성능 최적화&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;인덱싱: 데이터 검색 속도 향상을 위한 다양한 인덱스 구조 설계.&lt;/li&gt;
+&lt;li&gt;캐싱: 자주 사용하는 데이터를 빠르게 액세스하기 위한 캐싱 메커니즘 설계.&lt;/li&gt;
+&lt;li&gt;파티셔닝: 대규모 데이터베이스의 성능을 높이기 위해 데이터를 파티셔닝하는 전략 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;9-테스트-및-검증&#34;&gt;9. 테스트 및 검증&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;단위 테스트: 각 기능이 올바르게 작동하는지 확인하기 위한 단위 테스트 작성.&lt;/li&gt;
+&lt;li&gt;성능 테스트: 시스템이 다양한 부하 조건에서 안정적으로 동작하는지 확인하기 위한 성능 테스트 수행.&lt;/li&gt;
+&lt;li&gt;안정성 테스트: 장기간 운영 시 시스템 안정성 보장하기 위함.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;온전한 데이터베이스 시스템 설계를 위해서는 위와 같은 다양한 사항들이 맞물려 설계되어야한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 1</title>
+      <link>http://localhost:1313/database/database-1/</link>
+      <pubDate>Fri, 30 Aug 2024 16:53:28 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-1/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;데이터베이스 수강하기 전에 공부해두기&lt;/p&gt;
+&lt;p&gt;알고 있는 사항&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;SQLD자격증을 취득한 정도의 SQL 문법 이해도&lt;/li&gt;
+&lt;li&gt;트랜잭션, ACID, 트랜잭션 격리 수준 등&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;공부할 사항&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;데이터베이스 엔진을 만들기 위해서 필요한 것들&lt;/li&gt;
+&lt;li&gt;데이터베이스 엔진 구축하기&lt;/li&gt;
+&lt;/ol&gt;&lt;/blockquote&gt;
+&lt;h3 id=&#34;메모리와-디스크-간의-데이터-관리&#34;&gt;메모리와 디스크 간의 데이터 관리&lt;/h3&gt;
+&lt;p&gt;데이터베이스 시스템은 일반적으로 메모리 (RAM)과 디스크 (HDD/SSD)를 함께 사용하여 데이터 관리.
+- 메모리: 고속 액세스가 필요한 임시 데이터를 저장함. 예를 들어, 자주 액세스되는 데이터 페이지를 메모리에 캐싱하여 데이터베이스의 응답을 높이는 등의 처리 가능.
+- 디스크: 영구 데이터 저장에 사용. 디스크에 저장된 데이터는 시스템이 재시작되어도 유지.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>CAP &amp; Consistency Model | Nohv</title>
+<meta name="keywords" content="">
+<meta name="description" content="CAP이론과 일관성 모델
+CAP이론은 분산 시스템에서 다음 세 가지 속성을 동시에 만족할 수 없음을 설명한다.
+
+일관성: 모든 노드가 같은 데이터를 반환함.
+가용성: 모든 요청이 응답 받을 수 있음.
+네트워크 분할 허용: 네트워크 장애에도 시스템이 동작함.
+
+분산 시스템 설계자는 이 중 두 가지를 선택해야 하고, 선택에 따라 적합한 일관성 모델을 결정해야한다.
+CP(Consistency &amp; Partition Tolerance)
+강한 일관성을 유지하지만 일부 요청이 거부될 수 있음 (Zookeeper)
+데이터의 정확성과 신뢰성이 중요한 곳에서 적합하다.
+특히 금융 시스템에서 쓰인다.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/cap-consistency-model/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.45a2a75667a331e76c51b2e821e2985f426b0fd9f5f0a91ffa84983c75535302.css" integrity="sha256-RaKnVmejMedsUbLoIeKYX0JrD9n18Kkf&#43;oSYPHVTUwI=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/cap-consistency-model/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Nohv (Alt + H)">Nohv</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/database/" title="Database">
+                    <span>Database</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/network/" title="Network">
+                    <span>Network</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/os/" title="OS">
+                    <span>OS</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      CAP &amp; Consistency Model
+    </h1>
+    <div class="post-meta"><span title='2024-11-23 22:15:57 +0900 KST'>November 23, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="cap이론과-일관성-모델">CAP이론과 일관성 모델<a hidden class="anchor" aria-hidden="true" href="#cap이론과-일관성-모델">#</a></h2>
+<p>CAP이론은 분산 시스템에서 다음 세 가지 속성을 동시에 만족할 수 없음을 설명한다.</p>
+<ol>
+<li>일관성: 모든 노드가 같은 데이터를 반환함.</li>
+<li>가용성: 모든 요청이 응답 받을 수 있음.</li>
+<li>네트워크 분할 허용: 네트워크 장애에도 시스템이 동작함.</li>
+</ol>
+<p>분산 시스템 설계자는 이 중 두 가지를 선택해야 하고, 선택에 따라 적합한 일관성 모델을 결정해야한다.</p>
+<h4 id="cpconsistency--partition-tolerance">CP(Consistency &amp; Partition Tolerance)<a hidden class="anchor" aria-hidden="true" href="#cpconsistency--partition-tolerance">#</a></h4>
+<p>강한 일관성을 유지하지만 일부 요청이 거부될 수 있음 (Zookeeper)
+데이터의 정확성과 신뢰성이 중요한 곳에서 적합하다.
+특히 금융 시스템에서 쓰인다.</p>
+<h4 id="apavailability--partition-tolerance">AP(Availability &amp; Partition Tolerance)<a hidden class="anchor" aria-hidden="true" href="#apavailability--partition-tolerance">#</a></h4>
+<p>높은 가용성을 제공하지만 데이터 불일치 가능성이 존재함 (Cassandra)
+네트워크 분할이 발생해도 시스템은 계속 작동하며 요청에 응답한다.
+데이터는 즉시 동기화되지 않지만, 최종적으로 일관성이 달성된다.
+빠른 응답성과 높은 가용성이 필요한 일반적인 애플리케이션 서비스를 서빙할 때 적용된다.</p>
+<h4 id="ca-consistency--availability">CA (Consistency &amp; Availability)<a hidden class="anchor" aria-hidden="true" href="#ca-consistency--availability">#</a></h4>
+<p>네트워크 분할이 없는 상황에서 가능.
+모든 노드가 동일한 데이터를 반환하고, 모든 요청에 응답 가능하다.</p>
+<blockquote>
+<p>실질적으로 완벽한 CA는 구현하기 어렵다.</p></blockquote>
+<p>단일 데이터 센터 내의 클러스터 환경처럼 외부 요인이 없이 네트워크 안정성이 높은 경우.
+관계형 데이터베이스에서 단일 노드로 운영되는 경우 등.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">Nohv</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

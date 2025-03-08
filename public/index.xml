@@ -1,26 +1,805 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>New site for nohv.site</title>
+    <title>Nohv</title>
     <link>http://localhost:1313/</link>
-    <description>Recent content on New site for nohv.site</description>
-    <generator>Hugo</generator>
+    <description>Recent content on Nohv</description>
+    <generator>Hugo -- 0.145.0</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 25 Aug 2024 11:50:59 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 08 Mar 2025 21:28:01 +0900</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Dont Use Next Error in Server Component</title>
-      <link>http://localhost:1313/posts/dont-use-next-error-in-server-component/</link>
-      <pubDate>Sun, 25 Aug 2024 11:50:59 +0900</pubDate>
-      <guid>http://localhost:1313/posts/dont-use-next-error-in-server-component/</guid>
-      <description>240825TIL&#xA;아&amp;hellip;진짜 오바야&#xA;next/error 는 Error Boundary 마냥 클래스 컴포넌트 기반이어서, SSR환경에 렌더링 되면 안된다. 근데 이제,,,직접적으로 사용한 것은 아니지만 import tree를 따라가다 나온 @/lib/data.ts와 같은 데이터 fetching하는 함수를 모아둔 파일에서 간접적으로 불러오고 있었어서 Class extends value undefined is not a constructor or null 가 발생하고 있었다..&#xA;next/error는 Class Component이다. Class Component가 아무렇게나 렌더링되지 않도록 무분별한 import에 주의하자. </description>
+      <title>Zig RDBMS Lexer</title>
+      <link>http://localhost:1313/database/zig-rdbms-lexer/</link>
+      <pubDate>Sat, 08 Mar 2025 21:28:01 +0900</pubDate>
+      <guid>http://localhost:1313/database/zig-rdbms-lexer/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Zig의 allocator와 comptime에 대한 이해를 더하기 위해, facebook의 RocksDB를 기반으로 하는 RDBMS를 구성한다.
+가장 먼저 SQL문을 분해하고 분류하는 Lexer를 제작한다.
+모든 코드는 &lt;a href=&#34;https://notes.eatonphil.com/zigrocks-sql.html&#34;&gt;https://notes.eatonphil.com/zigrocks-sql.html&lt;/a&gt; 레포지토리를 기반으로 하며,
+추가적인 기능을 구현하는 내용을 포함한다.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Ready for&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;일단 가독성 및 효율성을 위한 유틸리티를 제작한다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-zig&#34; data-lang=&#34;zig&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; String &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;u8&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; Error &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; String;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; Result(&lt;span style=&#34;color:#66d9ef&#34;&gt;comptime&lt;/span&gt; T&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;union&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;enum&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        val&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; T,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        err&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; Error,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    };
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;lexer&#34;&gt;Lexer&lt;/h1&gt;
+&lt;p&gt;Lexer는 SQL문을 분석하는 도구를 말한다. SQL문장들을 Token으로 분리하는 Lexical analysis를 수행한다. 추후 이를 Parser에게 넘겨줄 수 있는 Token 배열의 형태로 만드는 일을 진행한다.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>240823</title>
-      <link>http://localhost:1313/posts/240823/</link>
-      <pubDate>Fri, 23 Aug 2024 10:27:41 +0900</pubDate>
-      <guid>http://localhost:1313/posts/240823/</guid>
-      <description>Terraform Code Gen 관련 사항 정리 목표는 다음과 같다.&#xA;provider-code-spec.json 파일 정의를 통해 실제 terraform provider code 생성이 가능하도록 workflow 구축.&#xA;기존의 example.json을 살펴보자.&#xA;Data Source Gen 지금 나는 Object Storage 관련한 Data source 작업들을 진행하고 있으므로, 해당 작업을 예시로 진행한다. 기존 소스를 terraform-plugin-codegen-framework 를 활용해서 생성한 뒤, 해당 파일에서 원하는 Attr 만 추출하여 미리 작성해둔 go template에 주입해준다. 외부에서 이를 어떻게 사용할지 고민 중인데, 자동화를 위해서는 Actions에 태우는 것이 가장 깔끔하지 않을까 생각 중.</description>
+      <title>First Time Ziggy</title>
+      <link>http://localhost:1313/posts/first-time-ziggy/</link>
+      <pubDate>Wed, 22 Jan 2025 01:37:41 +0900</pubDate>
+      <guid>http://localhost:1313/posts/first-time-ziggy/</guid>
+      <description>&lt;h3 id=&#34;zig&#34;&gt;Zig&lt;/h3&gt;
+&lt;p&gt;JS 문법을 사용했다면 인터페이스 상으로 익숙하게 접할 수 있는 언어.
+보기에는 JS같지만 Rust의 향기가 많이 난다.&lt;/p&gt;
+&lt;p&gt;Rust의 경우 새로 도입되는 개념들이나, 독자적인 기능들이 많아 접근이 쉽지 않았는데,
+오히려 그런 부분에서는 C와 유사한 부분들이 많이 보여서 좋았다.&lt;/p&gt;
+&lt;p&gt;그 안에서도 메모리를 관리나 코드 관리 차원에서 명시성을 주요하게 가져간다는 점이 Go와 닮은 듯하다.&lt;/p&gt;
+&lt;p&gt;C와 거의 같다고 해도 될 정도로 호환이 잘 되며,
+라이브러리도 내가 원하는 헤더파일을 가져와서 그 기능을 어렵지 않게 붙여 쓸 수 있도록 되어 있다.
+내맘대로 만들어먹는 libc 느낌.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Unix Socket</title>
+      <link>http://localhost:1313/network/unix-socket/</link>
+      <pubDate>Sat, 30 Nov 2024 19:14:55 +0900</pubDate>
+      <guid>http://localhost:1313/network/unix-socket/</guid>
+      <description>&lt;h2 id=&#34;unix-socket&#34;&gt;Unix socket&lt;/h2&gt;
+&lt;p&gt;Unix 소켓은 동일 호스트 내에서 프로세스 간 통신 (IPC, Inter-Process Communication)을 가능하게 하는 기능이다.&lt;/p&gt;
+&lt;p&gt;이는 네트워크 소켓과 유사한 API를 사용하지만, TCP/IP프로토콜을 사용하지 않고 로컬 파일 시스템을 기반으로 작동한다. Unix 도메인 소켓(UDS)는 주로 성능 및 메모리 효율성을 위해 사용되며, TCP소켓보다 더 빠른 통신을 지원한다.&lt;/p&gt;
+&lt;h3 id=&#34;특징-및-장점&#34;&gt;특징 및 장점&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;로컬 통신: 동일 호스트 내에서 통신이므로, 속도가 빠르다.&lt;/li&gt;
+&lt;li&gt;FS기반: 이는 포트를 통해 연결되지 않고, 파일시스템의 경로를 통해 식별되어 일반적인 파일처럼 다룰 수 있다. 이로 인해 파일 권한을 기반으로하는 접근 제어가 가능하다.&lt;/li&gt;
+&lt;li&gt;소켓 타입: Unix소켓은 스트림 소켓과 데이터그램 소켓을 지원한다. 스트림 소켓은 연결 지향적이며, 데이터그램 소켓은 비연결 지향적이다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;실제로 애플리케이션을 만들어서 특정 포트에 바인딩하는 것처럼,&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>local-network-routing-ip</title>
+      <link>http://localhost:1313/network/locale-network-routing-ip/</link>
+      <pubDate>Sat, 23 Nov 2024 22:37:12 +0900</pubDate>
+      <guid>http://localhost:1313/network/locale-network-routing-ip/</guid>
+      <description>&lt;h3 id=&#34;192168xx-와-127xxx-의-차이&#34;&gt;192.168.x.x 와 127.x.x.x 의 차이&lt;/h3&gt;
+&lt;p&gt;둘 다 로컬 네트워크 라우팅을 위해 사용되지만,
+정확한 차이를 확인하자.&lt;/p&gt;
+&lt;p&gt;192.168.x.x는 Class 기반의 주소가 판치던 때에 태어났다.
+Class A 기반의 IP 주소 범위인 이 범위는 로컬 네트워크를 라우팅하는 용도로 사용되도록 특정되어있으며, 내 로컬 네트워크 (LAN) 상에 있는 다른 노드(디바이스)를 가리키도록 제한되어 있다.
+실제 퍼블릭한 인터넷을 직접적으로 가리키지 못하도록 되어 있다.&lt;/p&gt;
+&lt;p&gt;반면에 127.x.x.x 는 Loopback Range로 더욱 자주 불리며,
+내 호스트 자체를 가리키는 용도로 많이 사용된다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Base Policy</title>
+      <link>http://localhost:1313/posts/base-policy/</link>
+      <pubDate>Sat, 23 Nov 2024 22:26:21 +0900</pubDate>
+      <guid>http://localhost:1313/posts/base-policy/</guid>
+      <description>&lt;h2 id=&#34;base-원칙&#34;&gt;BASE 원칙&lt;/h2&gt;
+&lt;p&gt;BASE원칙은 설계 철학 중 하나로, 분산 시스템 내에서 데이터 일관성을 완화하면서도 가용성과 성능을 극대화하기 위한 것이다.
+이는 ACID원칙과는 대조적으로, 대규모 분산 시스템(특히 NoSQL)에서 자주 적용된다.&lt;/p&gt;
+&lt;p&gt;BASE는 다음 세 가지 핵심 개념의 약자이다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Basically Available&lt;/li&gt;
+&lt;li&gt;Soft State&lt;/li&gt;
+&lt;li&gt;Eventually Consistent&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;아래에서 조금 더 자세히 살펴보자.&lt;/p&gt;
+&lt;h3 id=&#34;basically-available&#34;&gt;Basically Available&lt;/h3&gt;
+&lt;p&gt;시스템이 항상 가용성을 유지하며, 일부 노드나 부분적인 장애가 발생하더라도 대부분의 요청에 대해 응답 가능해야함을 의미한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;네트워크 장애나 서버 장애가 시스템의 완전한 중단을 초래하지 않음.&lt;/li&gt;
+&lt;li&gt;데이터가 최신 상태가 아닐 수도 있으나, 클라이언트는 여전히 서비스를 이용할 수 있다.&lt;/li&gt;
+&lt;li&gt;대규모 전자상거래 사이트 등에서는 특정 상품의 재고 상태가 부정확하더라도 구매 요청을 처리 가능하다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;soft-state&#34;&gt;Soft State&lt;/h3&gt;
+&lt;p&gt;시스템의 상태는 반드시 고정되어 있는 것이 아니며, 시간의 변화에 따라 변경 가능함을 의미한다.
+이는 데이터의 일관성이 항상 즉각적으로 보장되는 것이 아님을 의미한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>CAP &amp; Consistency Model</title>
+      <link>http://localhost:1313/posts/cap-consistency-model/</link>
+      <pubDate>Sat, 23 Nov 2024 22:15:57 +0900</pubDate>
+      <guid>http://localhost:1313/posts/cap-consistency-model/</guid>
+      <description>&lt;h2 id=&#34;cap이론과-일관성-모델&#34;&gt;CAP이론과 일관성 모델&lt;/h2&gt;
+&lt;p&gt;CAP이론은 분산 시스템에서 다음 세 가지 속성을 동시에 만족할 수 없음을 설명한다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;일관성: 모든 노드가 같은 데이터를 반환함.&lt;/li&gt;
+&lt;li&gt;가용성: 모든 요청이 응답 받을 수 있음.&lt;/li&gt;
+&lt;li&gt;네트워크 분할 허용: 네트워크 장애에도 시스템이 동작함.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;분산 시스템 설계자는 이 중 두 가지를 선택해야 하고, 선택에 따라 적합한 일관성 모델을 결정해야한다.&lt;/p&gt;
+&lt;h4 id=&#34;cpconsistency--partition-tolerance&#34;&gt;CP(Consistency &amp;amp; Partition Tolerance)&lt;/h4&gt;
+&lt;p&gt;강한 일관성을 유지하지만 일부 요청이 거부될 수 있음 (Zookeeper)
+데이터의 정확성과 신뢰성이 중요한 곳에서 적합하다.
+특히 금융 시스템에서 쓰인다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Consistency Model</title>
+      <link>http://localhost:1313/posts/consistency-model/</link>
+      <pubDate>Sat, 23 Nov 2024 21:31:49 +0900</pubDate>
+      <guid>http://localhost:1313/posts/consistency-model/</guid>
+      <description>&lt;h2 id=&#34;consistency-model&#34;&gt;Consistency Model&lt;/h2&gt;
+&lt;p&gt;분산 컴퓨팅에서 일관성 모델은 분산 시스템 내 데이터의 일관성을 유지하기 위한 규칙과 매커니즘을 정의해둔 것이다.&lt;/p&gt;
+&lt;p&gt;이는 분산 환경에서 데이터가 여러 노드에 걸쳐 저장되고 처리되는 상황에서 발생 가능한 데이터의 불일치를 해결하거나 최소화하기 위한 것이다.&lt;/p&gt;
+&lt;p&gt;분산 시스템의 설계는 CAP이론과 같은 제약 속에서 일관성, 가용성, 분할 내성을 균형 있게 고려해야한다.&lt;/p&gt;
+&lt;h3 id=&#34;strong-consistency&#34;&gt;Strong Consistency&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;모든 클라이언트가 동일한 시점에 동일한 데이터를 보장받는다. 즉, 특정 노드에서 데이터를 업데이트하면 모든 노드가 즉시 해당 변경을 반영하는 모델이다.&lt;/li&gt;
+&lt;li&gt;데이터의 정확성과 신뢰성이 높다.&lt;/li&gt;
+&lt;li&gt;그러나 네트워크 지연이 커지고, 가용성의 저하가 우려된다.&lt;/li&gt;
+&lt;li&gt;실제로 금융 시스템과 같이 원자적 트랜잭션이 가용성보다 중요시되는 환경에서 사용된다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;strong-consistency에서-가용성-저하가-우려되는-이유&#34;&gt;Strong Consistency에서 가용성 저하가 우려되는 이유&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;동기화 과정의 부담&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Strong Consistency는 모든 노드가 동일한 데이터를 유지하도록 보장해야한다.
+그러므로 데이터 업데이트가 발생할 때, 모든 노드에 변경 사항이 전파될 때가지 이외에 작업을 차단할 수밖에 없다.
+이 과정에서 다음 문제가 발생할 수 있다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Db Block Io</title>
+      <link>http://localhost:1313/database/db-block-io/</link>
+      <pubDate>Mon, 11 Nov 2024 22:12:12 +0900</pubDate>
+      <guid>http://localhost:1313/database/db-block-io/</guid>
+      <description>&lt;h2 id=&#34;테이블-스캔-방식에-따른-db-block-io-전략&#34;&gt;테이블 스캔 방식에 따른 DB Block IO 전략&lt;/h2&gt;
+&lt;p&gt;데이터베이스가 쿼리에서 요구하는 데이터를 검색하기 위해 테이블에 접근하는 방식의 종류는 다양하다.&lt;/p&gt;
+&lt;p&gt;가장 주요하고 크게는 인덱스를 활용하는지에 따라 갈리고, 인덱스를 어떤 방식으로 스캔할지에 대해서도 종류가 나뉜다.&lt;/p&gt;
+&lt;p&gt;각 스캔 방식들은 내부 작동 방식에 따라 서로 다른 Block IO 전략을 가지게 되는데, 이러한 내부 작동의 차이를 이해하면 왜 DB가 해당 방식을 사용했는지에 대한 이해도를 높일 수 있다.&lt;/p&gt;
+&lt;h3 id=&#34;block-io&#34;&gt;Block IO&lt;/h3&gt;
+&lt;p&gt;데이터베이스에서 IO를 하는 단위를 Block으로 하기 때문에, DB 엔진에 따라 1회의 IO에서 8KB내지 16KB의 데이터를 불러온다. 이러한 IO의 단위가 Block이 되어 데이터를 읽어와 버퍼 캐시에 적재하는 과정을 Block IO라고 한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Nix 1</title>
+      <link>http://localhost:1313/os/nix-1/</link>
+      <pubDate>Sun, 10 Nov 2024 21:38:17 +0900</pubDate>
+      <guid>http://localhost:1313/os/nix-1/</guid>
+      <description>&lt;h2 id=&#34;nixos&#34;&gt;NixOS&lt;/h2&gt;
+&lt;p&gt;NixOS 는 리눅스 배포판 중 하나로, 평소 잘 아는 Debian, Red Hat(RHEL) 등과는 별도의 계열을 가지는 배포판이다.
+&lt;code&gt;Nix 패키지 관리 시스템&lt;/code&gt; 을 기반으로 설계되어, 아래와 같은 특성을 가진다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;재현성: 소프트웨어 패키지를 격리된 환경에서 빌드하고, 의존성을 통제해 높은 재현성을 확보한다. 실제 작성 시에도 외부 패키지들의 버전을 세밀하게 기록하여 재현에 차질이 없도록 한다.&lt;/li&gt;
+&lt;li&gt;선언적: 소프트웨어 패키징에 특화된 선언적 프로그래밍 언어 Nix를 사용한다.&lt;/li&gt;
+&lt;li&gt;신뢰성: 한 패키지를 업데이트하는 일이 다른 패키지를 망가뜨리지 않도록 보장한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Nix를 사용하여 나의 로컬 기기 세팅을 명세화해두면, 추후 마이그레이션 등에서 큰 이점을 가져올 수 있다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Serf</title>
+      <link>http://localhost:1313/posts/serf/</link>
+      <pubDate>Wed, 23 Oct 2024 00:34:55 +0900</pubDate>
+      <guid>http://localhost:1313/posts/serf/</guid>
+      <description>&lt;h2 id=&#34;serf&#34;&gt;Serf&lt;/h2&gt;
+&lt;p&gt;서비스 디스커버리 라이브러리이다. 유명한 서비스들인 Consul, ZooKeeper 등과 비교하였을 때에 더욱 코어한 로직이 담긴 라이브러리이다. 실제로 하시코프에서는 Consul을 서비스하기 위해 내부적으로 Serf를 사용하고 있다.&lt;/p&gt;
+&lt;p&gt;서프의 큰 특징 중 하나는 중앙 집중식 레지스트리 아키텍쳐를 띄지 않는다는 것이다.
+서프를 이용해 서비스되고 있는 Consul의 경우는 중앙 집중식 아키텍쳐를 띄고 있는데, Serf는 그렇지 않음에 유의해서 보면 좋다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Serf는 서비스 디스버리에 포함되는가?&lt;/p&gt;
+&lt;p&gt;Serf가 Consul 등 서비스 디스커버리의 핵심적인 기능들을 포함하는 것은 맞지만, 실제로 서비스 디스커버리 포함된다고 말하기는 어렵다.
+실제 분류를 따져보면, &lt;strong&gt;노드 디스커버리 및 오케스트레이션 서비스&lt;/strong&gt; 로 분류하는 것이 조금 더 정확하다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>MTLS</title>
+      <link>http://localhost:1313/network/mtls/</link>
+      <pubDate>Sun, 20 Oct 2024 16:41:36 +0900</pubDate>
+      <guid>http://localhost:1313/network/mtls/</guid>
+      <description>&lt;h2 id=&#34;mtls-with-cfssl&#34;&gt;mTLS with cfssl&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTE: 개념에 대해 설명하지 않고, 간단한 구현을 진행하는 글입니다.
+mTLS와 CFSSL에 대해서는 아래 글을 참고해주세요.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;mTLS: &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc8705&#34;&gt;rfc8705&lt;/a&gt; &lt;!-- raw HTML omitted --&gt;
+cfssl: &lt;a href=&#34;https://github.com/cloudflare/cfssl&#34;&gt;cfssl&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;mTLS의 경우는 요 영상을 통해서도 어렵지 않게 접할 수 있다 :)&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=4sJd6PIkP_s&amp;amp;t=349s&#34;&gt;토스ㅣSLASH 23 - 고객 불안을 0으로 만드는 토스의 Istio Zero Trust&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;다만 위 영상에서 소개되는 istio의 경우, mTLS를 위한 다양한 기능을 제공하기에 어렵지 않게 프로덕션 환경에서 mTLS를 적용할 수 있다.&lt;/p&gt;
+&lt;p&gt;이 글에서 진행하는 내용은 istio를 이용한 것은 아니며, mTLS를 위해서 자체 CA를 구축하고, 이를 기반으로 두 애플리케이션이 연결될 수 있도록 하는 것을 목적으로 한다.
+이 때 자체 CA 구축을 위해 cfssl을 사용하고, 직접 생성된 인증서를 기반으로 mTLS 통신을 진행하자.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Log</title>
+      <link>http://localhost:1313/posts/log/</link>
+      <pubDate>Sat, 19 Oct 2024 15:47:27 +0900</pubDate>
+      <guid>http://localhost:1313/posts/log/</guid>
+      <description>&lt;h1 id=&#34;logging&#34;&gt;Logging&lt;/h1&gt;
+&lt;p&gt;로깅은 프로그래밍 전반에 걸쳐 매우 중요하게 여겨지는 요소이다.
+실제 핵심적인 로직에 반영되는 것은 아니지만, 안정적이고 에러에 강한 프로그램을 만들기 위해서라면 로그는 분명 필요하다.&lt;/p&gt;
+&lt;h2 id=&#34;why-we-log&#34;&gt;Why we log&lt;/h2&gt;
+&lt;p&gt;왜 로깅이 필요한지 돌이켜 생각해보면, 컴퓨터가 처음 만들어지는 시대로 돌아가야 한다.
+우리는 전기 신호를 통해 특정 연산을 수행하는 작은 장치들을 통해, 인간이 수작업으로 진행해야 했던 일들을 점차 자동화해나가기 시작했다.&lt;/p&gt;
+&lt;p&gt;그러나 전기 신호는 가시성은 있으나 가독성이 없어, 단순한 전기 신호만으로는 해당 프로그램이 어떤 작업을 수행하고 있는지 파악하기 매우 어렵다.
+또한, 시간이 지나며 자그마한 일들을 수행하던 프로그램들이 합쳐지고 거대해지기 시작했다. 더 이상 프로그램의 내부를 모두 펼쳐 들여다보고, 연산이 이루어지는 과정 과정을 사람이 전부 확인하기 어려워지게 되었다. 전기 신호는 빛과 같으니, 여러 연산을 수행하는 전기 신호의 흐름을 사람이 파악한다는 것이 불가능함을 직관적으로 이해하기만 하더라도 이러한 시기가 오기까지는 그리 많은 시간이 걸리지 않았음을 알 수 있을 것이다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 10</title>
+      <link>http://localhost:1313/database/database-10/</link>
+      <pubDate>Fri, 11 Oct 2024 23:21:40 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-10/</guid>
+      <description>&lt;h2 id=&#34;rewrite-dbms-code&#34;&gt;Rewrite DBMS code&lt;/h2&gt;
+&lt;p&gt;To get SQL queries by input and parse it to operate logics based on it.&lt;/p&gt;
+&lt;p&gt;optimizer.rs&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;crate&lt;/span&gt;::database::Database;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; std::error::Error;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#[derive(Debug)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;enum&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ExecutionStep&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Scan(String),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Filter(String),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Project(Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Insert(String, Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Optimizer&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    database: &lt;span style=&#34;color:#a6e22e&#34;&gt;Database&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;impl&lt;/span&gt; Optimizer {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;new&lt;/span&gt;(database: &lt;span style=&#34;color:#a6e22e&#34;&gt;Database&lt;/span&gt;) -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Self&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Optimizer { database }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    } 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;optimize&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;self, query: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;str&lt;/span&gt;) -&amp;gt; Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;ExecutionStep&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; query.to_lowercase().starts_with(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;select&amp;#34;&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table_name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; query.split_whitespace().nth(&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;).unwrap_or(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;).to_string();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            vec![
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Scan(table_name.clone()),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Project(vec![&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;*&amp;#34;&lt;/span&gt;.to_string()]),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            ]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; query.to_lowercase().starts_with(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;insert&amp;#34;&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; parts: Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;str&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; query.split_whitespace().collect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table_name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; parts[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;].to_string(); 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; values &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; parts[&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;].trim_matches(&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; c &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;(&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; c &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;)&amp;#39;&lt;/span&gt;).split(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                .map(&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;s&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; s.trim().trim_matches(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#34;&amp;#39;&lt;/span&gt;).to_string())
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                .collect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            vec![ExecutionStep::Insert(table_name, values)]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            vec![]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;execute_plan&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; self, plan: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;[ExecutionStep]) -&amp;gt; Result&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt;, Box&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;dyn&lt;/span&gt; Error&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Vec::new();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; step &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; plan {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;match&lt;/span&gt; step {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Scan(table_name) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self.database.get_table(table_name);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; table.rows.clone();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Project(columns) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; columns[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;*&amp;#34;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Insert(table_name, values) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; table &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self.database.get_table_mut(table_name);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                    table.insert(values.clone()).expect(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;format!(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Insert Operation Failed&amp;#34;&lt;/span&gt;));
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                ExecutionStep::Filter(_) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        Ok(result)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Extract query_optimizer logic from sql_parser.
+interprete sql query by reading fisrt keyword.
+(do not use sql parser functions)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 9</title>
+      <link>http://localhost:1313/database/database-9/</link>
+      <pubDate>Thu, 10 Oct 2024 23:37:24 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-9/</guid>
+      <description>&lt;h2 id=&#34;database-storing-structure&#34;&gt;Database storing structure&lt;/h2&gt;
+&lt;h3 id=&#34;tablespace&#34;&gt;Tablespace&lt;/h3&gt;
+&lt;p&gt;Tablespace is a space that storing real data in database object.
+It is a physical part of database, allocates repositories to all DBMSs that are managed by segment.&lt;/p&gt;
+&lt;p&gt;It is for managing massive datas with stable restoring mechanism, and also for disk i/o opt.&lt;/p&gt;
+&lt;h3 id=&#34;page&#34;&gt;Page&lt;/h3&gt;
+&lt;p&gt;In MySQL, there are many types of datas.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Row in Table&lt;/li&gt;
+&lt;li&gt;Index&lt;/li&gt;
+&lt;li&gt;Undo Log&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;etc..&lt;/p&gt;
+&lt;p&gt;Row: Real Data that are managed by MySQL.
+Index: For efficient row searching.
+Undo Log: Datas for transaction operation.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 8</title>
+      <link>http://localhost:1313/database/database-8/</link>
+      <pubDate>Tue, 08 Oct 2024 23:17:41 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-8/</guid>
+      <description>&lt;h2 id=&#34;analyze-sqlpest-file&#34;&gt;Analyze sql.pest file&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;.pest&lt;/code&gt; file format is for files that are used for parser generator names &lt;strong&gt;Pest&lt;/strong&gt;. It usually used in rust ecosystem, appropriate for define various language syntaxes and operates syntax analysis.&lt;/p&gt;
+&lt;p&gt;And so, Let&amp;rsquo;s break down my &lt;code&gt;sql.pest&lt;/code&gt; file.&lt;/p&gt;
+&lt;h2 id=&#34;general-overview&#34;&gt;General Overview&lt;/h2&gt;
+&lt;p&gt;sql.pest&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-pest&#34; data-lang=&#34;pest&#34;&gt;/////// LIMITATIONS OF CURRENT GRAMMAR
+// quote strings only allow certain characters
+// column_names, etc. are defined as only allowing alpha 
+
+//////// PUNCTUATIONS
+// curly braces
+open_brace = { &amp;#34;{&amp;#34; }
+close_brace = { &amp;#34;}&amp;#34; }
+open_paren = { &amp;#34;(&amp;#34; }
+close_paren = { &amp;#34;)&amp;#34; }
+comma = { &amp;#34;,&amp;#34; }
+star = { &amp;#34;*&amp;#34; }
+quote = { &amp;#34;\&amp;#34;&amp;#34; }  // a single quote
+
+//////// SPECIAL
+WHITESPACE = _{ &amp;#34; &amp;#34; }
+
+///////// DATATYPE
+int = { &amp;#34;INT&amp;#34; }
+text = { &amp;#34;TEXT&amp;#34; }
+
+///////// VALUE
+int_val = @{ (&amp;#34;+&amp;#34; | &amp;#34;-&amp;#34;)? ~ ASCII_DIGIT+ }
+// legal characters allowed in string
+// text parsing will require more thought
+char = ${ ASCII_ALPHANUMERIC | &amp;#34;+&amp;#34; | &amp;#34;-&amp;#34; | &amp;#34;.&amp;#34; }
+quoted_text_val = { quote ~ char* ~ quote }
+literal_text_val = @{ char+ }
+value = { (int_val | quoted_text_val | literal_text_val) }
+
+///////// SQL KEYWORDS/IDENTIFIERS
+// keywords will be case insensitive
+// case insensitivity is specified through &amp;#39;^&amp;#39;
+create_kw = { ^&amp;#34;CREATE&amp;#34; }
+table_kw = { ^&amp;#34;TABLE&amp;#34; }
+select_kw = { ^&amp;#34;SELECT&amp;#34; }
+from_kw = {  ^&amp;#34;FROM&amp;#34; }
+insert_kw = { ^&amp;#34;INSERT&amp;#34; }
+into_kw = { ^&amp;#34;INTO&amp;#34; }
+values_kw = { ^&amp;#34;VALUES&amp;#34; }
+
+table_name = { (ASCII_ALPHA)+ }
+
+///////// CREATE TABLE DEFINITION
+column_name = ${ (ASCII_ALPHA)+ }
+
+column_type = @{ ( int | text ) }
+column_def = { column_name ~ column_type }
+
+table_fields = { (column_def ~ comma)* ~ (column_def)? }
+
+create_table_stmnt = { create_kw ~ table_kw ~ table_name ~
+                       (open_brace ~ table_fields ~ close_brace) }
+
+////////// SELECT STATEMENT
+
+select_stmnt = { select_kw ~ star ~ from_kw ~ table_name }
+
+////////// INSERT STATMENT
+
+column_names = { (column_name ~ comma)* ~ (column_name)? }
+values = { (value ~ comma)* ~ (value)? }
+
+insert_stmnt = { insert_kw ~ into_kw ~ table_name ~ ( open_paren ~ column_names ~ close_paren ) ~
+                 values_kw ~ ( open_paren ~ values ~ close_paren ) }
+
+insert_grammar = { SOI ~ insert_kw ~ into_kw ~ table_name ~ ( open_paren ~ column_names ~ close_paren ) ~
+                  values_kw ~ ( open_paren ~  values ~ close_paren ) ~ EOI }
+
+////////// UNIFIED GRAMMAR
+
+sql_grammar = {SOI ~ (create_table_stmnt | select_stmnt | insert_stmnt ) ~ EOI }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The file defines a grammar for parsing a subset of SQL that focuses on basic commands like &lt;code&gt;CRAETE&lt;/code&gt;, &lt;code&gt;TABLE&lt;/code&gt;, &lt;code&gt;SELECT&lt;/code&gt;, and &lt;code&gt;INSERT&lt;/code&gt;.
+This grammar allows only specified characters, for example, limits strings wrapped with double quote, or enforces &lt;code&gt;column_names&lt;/code&gt; to allow alphabet characters only.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 7</title>
+      <link>http://localhost:1313/database/database-7/</link>
+      <pubDate>Tue, 08 Oct 2024 01:27:48 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-7/</guid>
+      <description>&lt;h2 id=&#34;sql-optimization&#34;&gt;SQL Optimization&lt;/h2&gt;
+&lt;p&gt;Before executing SQL, subdivide optimization process is as follows.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Parsing SQL&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;SQL Parser parses SQL when parser gets it from user. To summmarize SQL parsing process, it is as belows.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Generate parsing tree: generate parsing tree from whole SQL code by analyzing it into individual components.&lt;/li&gt;
+&lt;li&gt;Checking syntax: Checks if it has inaccurate syntax error. Like using unavailable or missing keywords, written with wrong sequence&amp;hellip;etc.&lt;/li&gt;
+&lt;li&gt;Checking semantic: Check if it has inaccurate semantic error. If it used table or column that does not exist. Or has right permissions to use the target object.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Optimize SQL&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The next step is SQL optimization, and the Optimizer takes the role. SQL Optimizer selects one efficient way from various execution path that generated with precollected statistic information of systems and objects. It&amp;rsquo;s the most important core engine that determines database performance.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Path &amp; Exec</title>
+      <link>http://localhost:1313/os/path/</link>
+      <pubDate>Mon, 30 Sep 2024 01:53:19 +0900</pubDate>
+      <guid>http://localhost:1313/os/path/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;ls나 cd는 뭔데 그냥 입력해도 동작하나?
+예약어의 기원이 궁금해&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h3 id=&#34;환경변수-정리&#34;&gt;환경변수 정리&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;cc: c compiler&lt;/li&gt;
+&lt;li&gt;gcc: gnu compiler collection. GNU 프로젝트의 일환으로 개발되어 쓰이는 컴파일러.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;리눅스에서는 gcc가 기본으로, gcc가 자동으로 cc로 연결되어 사용되도록 함.&lt;/p&gt;
+&lt;p&gt;일반적인 실행파일의 경우, 해당 실행파일이 존재하는 디렉토리에 접근해야 실행 가능하게된다.&lt;/p&gt;
+&lt;p&gt;일반적인 바이너리 파일을 열게 되면, 다음과 같이 나온다(2진수 포맷).&lt;/p&gt;
+&lt;p&gt;이렇게 기계어로 정리된 파일을 실행파일로 사용하게 된다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;xxd -b binary
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625a8: &lt;span style=&#34;color:#ae81ff&#34;&gt;10111010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01010101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01001111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11010101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11010110&lt;/span&gt;  .UO...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625ae: &lt;span style=&#34;color:#ae81ff&#34;&gt;11100111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11000101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01011111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01001000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11101111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11110001&lt;/span&gt;  .._H..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625b4: &lt;span style=&#34;color:#ae81ff&#34;&gt;11111110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00000010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11000100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10100100&lt;/span&gt;  ..2...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625ba: &lt;span style=&#34;color:#ae81ff&#34;&gt;00000000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00111011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11011011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10110100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11001011&lt;/span&gt;  .;.0..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625c0: &lt;span style=&#34;color:#ae81ff&#34;&gt;01101011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11100110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01000000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11110101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10000001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10010001&lt;/span&gt;  k.@...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625c6: &lt;span style=&#34;color:#ae81ff&#34;&gt;10100010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11010100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00011100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11001100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00101001&lt;/span&gt;  .....&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625cc: &lt;span style=&#34;color:#ae81ff&#34;&gt;10000011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10011001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11101010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110000&lt;/span&gt;  .....0
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625d2: &lt;span style=&#34;color:#ae81ff&#34;&gt;00001011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10110110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00100000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01101010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10011000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10011100&lt;/span&gt;  .. j..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625d8: &lt;span style=&#34;color:#ae81ff&#34;&gt;00011000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10101110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00001001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111001&lt;/span&gt;  .r....
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625de: &lt;span style=&#34;color:#ae81ff&#34;&gt;10100101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10010001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00010110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111010&lt;/span&gt;  ...2..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625e4: &lt;span style=&#34;color:#ae81ff&#34;&gt;00111100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11001101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11011000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10100111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00011010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111100&lt;/span&gt;  &amp;lt;.....
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625ea: &lt;span style=&#34;color:#ae81ff&#34;&gt;10110111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11101110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00100100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10100101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11110011&lt;/span&gt;  ..$...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625f0: &lt;span style=&#34;color:#ae81ff&#34;&gt;10110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01110010&lt;/span&gt;                                      .r
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;환경변수 파일은 이러한 바이너리 파일을 글로벌하게 수행할 수 있도록 돕는 역할을 한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Network 3</title>
+      <link>http://localhost:1313/network/network-3/</link>
+      <pubDate>Sun, 29 Sep 2024 01:54:31 +0900</pubDate>
+      <guid>http://localhost:1313/network/network-3/</guid>
+      <description>&lt;h3 id=&#34;계층적-라우팅&#34;&gt;계층적 라우팅&lt;/h3&gt;
+&lt;p&gt;특정 네트워크 토폴로지 내에서, 라우팅을 위한 정보 저장량을 최적화하기 위한 기법.&lt;/p&gt;
+&lt;p&gt;계층적 라우팅에서는 트리 최상단의 라우터에 담기는 라우팅 정보를 최소화하고자, 본인의 IP를 기준으로 트리를 구분한다. 이를 통해 최소한의 정보만 남겨 라우팅을 진행 가능하다.&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://image.slideserve.com/1334086/slide41-l.jpg&#34; alt=&#34;계층적 라우팅&#34;  /&gt;
+&lt;/p&gt;
+&lt;p&gt;여기에는 longest prefix search 알고리즘이 사용된다.&lt;/p&gt;
+&lt;p&gt;또한 이러한 트리 토폴로지에서 나오는 개념이 병합이다.&lt;/p&gt;
+&lt;h3 id=&#34;병합&#34;&gt;병합&lt;/h3&gt;
+&lt;p&gt;경로 병합을 의미한다.&lt;/p&gt;
+&lt;p&gt;수치상 인접한 IP접두사들을 합쳐서 더 큰 주소 공간을 나타내는 하나의 짧아진 접두사를 만드는 방식으로 동작하며, 이렇게 만들어진 접두사를 병합체 혹은 축약체라고 부른다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Garbage Collection</title>
+      <link>http://localhost:1313/posts/garbage-collection/</link>
+      <pubDate>Tue, 24 Sep 2024 17:40:00 +0900</pubDate>
+      <guid>http://localhost:1313/posts/garbage-collection/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;ref: &lt;a href=&#34;https://blog.siner.io/2021/12/26/garbage-collection/&#34;&gt;https://blog.siner.io/2021/12/26/garbage-collection/&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h3 id=&#34;mark-and-sweep&#34;&gt;Mark-and-Sweep&lt;/h3&gt;
+&lt;p&gt;전통적인 가비지 컬렉션 기법 중 하나.
+프로그램 실행 중 동적으로 할당된 메모리들에 대해 주기적으로 sweeping을 진행하며 메모리를 관리함.&lt;/p&gt;
+&lt;h4 id=&#34;과정&#34;&gt;과정&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Mark: 프로그램이 도달할 수 있는 모든 객체에 대해 탐색을 시작하며(유향그래프 형태), 직접 또는 간접적으로 참조 가능한 객체에 &amp;ldquo;표시&amp;quot;를 남긴다. 이는 트리 탐색과 비슷한 형식으로 이루어지며, 모든 루트 객체에서 시작해 연결된 객체를 찾아나가는 과정을 거친다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;mark 단계에서 root set 전체를 순회하며 flag를 &amp;lsquo;사용중&amp;rsquo;상태로 설정한다. 현재 참조가 되어 있는 객체들은 모두 &amp;lsquo;사용중&amp;rsquo; flag를 가지게 된다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Sweep: 표시되지 않은, 즉 참조되지 않은 객체들을 수거하여 메모리에서 해제한다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;현재 사용중인 메모리가 모두 스캔되었기에 &amp;lsquo;사용중&amp;rsquo;상태가 아닌 메모리를 모두 해제 가능하다.&lt;/li&gt;
+&lt;li&gt;GC를 진행하는 동안 stop-the-world가 필요하다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;tri-color-marking&#34;&gt;Tri-color marking&lt;/h3&gt;
+&lt;p&gt;기본적인 Tri-color marking은 다음과 같이 동작한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>V8 Isolate 2</title>
+      <link>http://localhost:1313/network/v8-isolate-2/</link>
+      <pubDate>Tue, 17 Sep 2024 02:49:30 +0900</pubDate>
+      <guid>http://localhost:1313/network/v8-isolate-2/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;난잡한 지식을 머릿속으로 정렬하고, 순서대로 글에 적습니다.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;v8 isolate는 v8엔진의 기능 중 하나로, v8 자체를 복제하여 별도의 독립된 Javascript 실행 환경을 제공하는 기능입니다.&lt;/p&gt;
+&lt;p&gt;해당 기능은 별도의 heap 메모리 공간, 별도의 garbage collector 등 격리된 환경을 조성하게 된다는 것에 매우 큰 장점을 가집니다.
+Javascript에서 비동기 제어를 위해 동작하는 Event Loop 및 Call Stack 또한 별도로 가지게 됩니다.
+이러한 컨셉을 통해 우리는 단일 스레드에서도 격리된 환경을 조성하여 javascript 코드 번들을 실행할 수 있습니다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Multiplexing</title>
+      <link>http://localhost:1313/posts/multiplexing/</link>
+      <pubDate>Sat, 14 Sep 2024 23:17:21 +0900</pubDate>
+      <guid>http://localhost:1313/posts/multiplexing/</guid>
+      <description>&lt;h3 id=&#34;multiplexing-정리&#34;&gt;Multiplexing 정리&lt;/h3&gt;
+&lt;p&gt;별 생각 없다가, 어제 디코에서 아우슥 사람들 얘기 듣다 보니 나도 헷갈려서 다시금 정리한다.
+Encap, Decap에 대한 개념을 시작으로 이어진 얘기였지만 결국 Multiplexing에 대한 내용을 정리하는 것으로 한다!&lt;/p&gt;
+&lt;p&gt;그렇게 되면 내용을 컴퓨터 일반으로 빼서 고민하는 것이 좋았겠지만, 주로 논의되는 곳이 네트워크 단에서이고 이 글을 쓰게 된 발단이 네트워킁 이야기이므로 이곳에 정리한다.&lt;/p&gt;
+&lt;h3 id=&#34;multiplexing-in-logic-design&#34;&gt;Multiplexing in logic design&lt;/h3&gt;
+&lt;p&gt;한국어로 다중화, 처음 만난 것은 논리 설계 수업이었다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://ko.wikipedia.org/wiki/%EB%A9%80%ED%8B%B0%ED%94%8C%EB%A0%89%EC%84%9C&#34;&gt;멀티플렉서&lt;/a&gt;
+멀티플렉서(multiplexer) 또는 mux는 여러 아날로그 또는 디지털 입력 신호 중 하나를 선택하여 선택된 입력을 하나의 라인에 전달하는 장치이다. (위키백과)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Network 2</title>
+      <link>http://localhost:1313/network/network-2/</link>
+      <pubDate>Thu, 12 Sep 2024 00:29:41 +0900</pubDate>
+      <guid>http://localhost:1313/network/network-2/</guid>
+      <description>&lt;h3 id=&#34;2계층-동작&#34;&gt;2계층 동작&lt;/h3&gt;
+&lt;p&gt;2계층은 통상적으로 스위치라고 불리며, 전기 신호 - 디지털 데이터 간의 전환 작업을 수행하는 랜카드(NIC)가 존재하는 계층이다.
+랜카드는 무선(Wi-Fi, IEEE 802.3), 유선(Ethernet, IEEE 802.11) 으로 나뉘는데, 각각에 맞는 프로토콜에 기반하여 전기적 신호를 디지털 데이터로 변환한다.
+이 과정에서, 디지털 데이터로 변환하고 이를 상위 계층에 전달하는 역할을 하는 것이 운영체제 내 드라이버이며, 각 네트워크 장치 드라이버가 랜카드를 조작하여 데이터 변환을 진행한다.&lt;/p&gt;
+&lt;p&gt;그러나 이와 별개로 2계층 장치인 라우터의 경우 별도의 상위 계층을 위한 작업을 수행하지 않고, 변환된 디지털 데이터를 기반으로 목적지 MAC주소를 파악한 뒤 해당 주소에 맞게 전송하는 기능을 주로 수행한다. 이는 로컬 네트워크(LAN) 상에서 이루어지며, 만일 로컬 네트워크를 벗어나는 요청이 들어오는 경우 3계층 스위치에서 IP를 기반으로 추가적인 전송 작업을 수행한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>OS 2</title>
+      <link>http://localhost:1313/os/os-2/</link>
+      <pubDate>Wed, 11 Sep 2024 11:22:04 +0900</pubDate>
+      <guid>http://localhost:1313/os/os-2/</guid>
+      <description>&lt;h3 id=&#34;v8-isolate-study&#34;&gt;V8-isolate study&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;결국 독립적인 heap 메모리 할당, GC 등을 통하여 독립적인 실행 환경을 구성하도록 해준다.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/nodejs/node/blob/main/src/node_worker.cc&#34;&gt;https://github.com/nodejs/node/blob/main/src/node_worker.cc&lt;/a&gt;
+위 파일에서 확인 시 Node.js의 &lt;code&gt;worker_thread&lt;/code&gt; 또한 내부적으로 v8-isolate를 사용하여 구현된 것을 알 수 있는데,
+그렇기에 동작이 매우 유사하다.&lt;/p&gt;
+&lt;h3 id=&#34;경량-스레드&#34;&gt;경량 스레드&lt;/h3&gt;
+&lt;p&gt;경량 스레드는 (Light weight thread) 는 일반적인 스레드와 달리 운영체제 커널에서 관리되지 않고 유저 레벨에서 관리되는 스레드이다.
+효율적인 멀티스레딩 환경을 제공하고, 커널의 간섭 없이 애플리케이션 수준에서 이를 스케쥴링 및 컨텍스트 스위칭을 할 수 있도록 한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>OS 1</title>
+      <link>http://localhost:1313/os/os-1/</link>
+      <pubDate>Wed, 11 Sep 2024 11:03:09 +0900</pubDate>
+      <guid>http://localhost:1313/os/os-1/</guid>
+      <description>&lt;h3 id=&#34;go-goroutine-java-virtual-thread-nodejs-worker_thread&#34;&gt;Go goroutine, JAVA virtual thread, Node.js worker_thread&lt;/h3&gt;
+&lt;h4 id=&#34;공통점&#34;&gt;공통점&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;경량 스레드&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;이들 모두 경량 스레드 또는 작업 단위로서 동작한다. 즉, 전통적인 운영체제의 스레드보다 훨씬 적은 비용으로 생성되고 스케쥴링될 수 있다.&lt;/li&gt;
+&lt;li&gt;실제 운영체제 스레드보다 메모리 사용량이 적고, 컨텍스트 스위칭 비용이 적다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;동시성 지원&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;모두 동시성 프로그래밍을 지원하며, 여러 작업을 비동기적으로 실행하여 프로그램의 응답성을 높인다.&lt;/li&gt;
+&lt;li&gt;복잡한 병렬 처리나 비동기 작업을 더 쉽게 관리할 수 있도록 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;비동기적 실행&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;병렬 작업을 스케쥴링하고 비동기적으로 실행할 수 있다. 작업 완료를 기다리지 않고 다른 작업을 수행할 수 있도록 설계되었다.&lt;/li&gt;
+&lt;li&gt;특히 I/O 작업에서 효율성을 극대화할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;운영체제 스레드와의 매핑&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;운영체제 스레드를 직접적으로 사용하지 않거나, 많은 수의 작업 단위를 적은 수의 운영체제 스레드에 매핑하여 사용한다. 이를 통해 적은 자원으로 많은 병렬 작업 처리가 가능하다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;차이점&#34;&gt;차이점&lt;/h4&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;특징&lt;/th&gt;
+          &lt;th&gt;Go goroutine&lt;/th&gt;
+          &lt;th&gt;JAVA virtual thread&lt;/th&gt;
+          &lt;th&gt;Node.js worker thread&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;경량성&lt;/td&gt;
+          &lt;td&gt;매우 경량(수백만 개 생성 가능)&lt;/td&gt;
+          &lt;td&gt;경량(기존 스레드보다 적은 자원)&lt;/td&gt;
+          &lt;td&gt;상대적으로 무겁고, 운영체제 스레드 직접 사용(기존 Node.js 런타임 이벤트 루프에서 벗어남)&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;스케쥴링 모델&lt;/td&gt;
+          &lt;td&gt;M스레드(Go 런타임 스케쥴러)&lt;/td&gt;
+          &lt;td&gt;1:1스레드 (JVM관리)&lt;/td&gt;
+          &lt;td&gt;운영체제 스레드(단일 스레드 모델 보완)&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;동시성 처리&lt;/td&gt;
+          &lt;td&gt;고수준 동시성(채널 사용)&lt;/td&gt;
+          &lt;td&gt;일반 스레드 모델과 유사&lt;/td&gt;
+          &lt;td&gt;메세지 패싱&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;비동기 지원&lt;/td&gt;
+          &lt;td&gt;동기/비동기 모두 지원&lt;/td&gt;
+          &lt;td&gt;비동기 및 블로킹 작업 모두 효율적 처리&lt;/td&gt;
+          &lt;td&gt;주로 비동기 처리, 블로킹 시 성능 저하 가능&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;통신 방식&lt;/td&gt;
+          &lt;td&gt;채널을 통한 통신&lt;/td&gt;
+          &lt;td&gt;일반 스레드 API&lt;/td&gt;
+          &lt;td&gt;메세지 패싱(직렬화 필요)&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;요약&#34;&gt;요약&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Go 의 goroutine은 매우 경량화된 동시성 모델로, 수많은 동시성 처리에 최적화되어 있다.&lt;/li&gt;
+&lt;li&gt;JAVA 의 virtual thread는 전통적인 스레드의 사용성을 유지하면서 경량화된 가상 스레드를 통해 동시성을 처리하며, 블로킹 작업에 대한 최적화 제공.&lt;/li&gt;
+&lt;li&gt;Node.js 의 worker thread는 실제 운영체제 스레드를 사용하여 CPU 집약적인 작업을 처리하고, Node.js의 단일 스레드 모델을 보완함.&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>Database 6</title>
+      <link>http://localhost:1313/database/database-6/</link>
+      <pubDate>Sun, 08 Sep 2024 22:54:19 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-6/</guid>
+      <description>&lt;h3 id=&#34;데이터베이스-시스템-구현&#34;&gt;데이터베이스 시스템 구현&lt;/h3&gt;
+&lt;p&gt;세부 구현을 시작한다.&lt;/p&gt;
+&lt;p&gt;먼저, 마운트된 공간에 데이터를 적재하고, 해당 데이터를 조회하는 기본적인 기능을 수행하도록 Table 구조체를 작성한다.&lt;/p&gt;
+&lt;p&gt;예시 코드를 작성할 때에는 마운트 포인트를 &lt;code&gt;pwd + /data&lt;/code&gt; 로 임의 설정했다.
+내부에 테이블 종류에 따라 폴더를 추가 구성하고, 해당 폴더 내부에 &lt;code&gt;.schema&lt;/code&gt; 파일을 생성하여 schema 구조를 정의하고, &lt;code&gt;.csv&lt;/code&gt; 확장자로 데이터를 적재했다.
+데이터 저장 형태는 여러 형태가 권장되고 있었는데, 별도의 예시를 찾기 어려워 테이블 구조를 저장하고 관리하기 좋은 csv 형태를 선택했다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>V8 Isolate</title>
+      <link>http://localhost:1313/network/v8-isolate/</link>
+      <pubDate>Sun, 08 Sep 2024 12:11:56 +0900</pubDate>
+      <guid>http://localhost:1313/network/v8-isolate/</guid>
+      <description>&lt;h3 id=&#34;v8-isolate&#34;&gt;v8-isolate&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://v8.github.io/api/head/classv8_1_1Isolate.html&#34;&gt;v8 isolate class reference&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;isolate은 v8엔진의 일종의 복사본으로, 격리된 환경에서 독립적인 병렬 실행이 가능하도록 도와주는 기능이다.&lt;/p&gt;
+&lt;p&gt;하나의 프로세스 내에서 여러 작업들이 서로 간섭 없이 실행되도록 한다.&lt;/p&gt;
+&lt;p&gt;특히 서버리스 환경에서 조금 더 작은 단위의 여러 작업들을 병렬 실행하고자 할 때, 프로세스를 여러 격리된 환경으로 분리하는 것에 탁월하다.&lt;/p&gt;
+&lt;p&gt;실제 Cloudflare Workers 는 모든 동작에 대해 http call 을 통해 서비스를 제공하는데, 이 경우 v8-isolate를 사용하여 경량 작업들을 하나의 인스턴스에서 병렬로 실행하게 만들어두었다.
+&lt;a href=&#34;https://developers.cloudflare.com/workers/reference/how-workers-works/#isolates&#34;&gt;Cloudflare Docs&lt;/a&gt;
+이와 같은 작업을 통해 서버리스 환경에서 한 번의 콜드스타트 만으로 여러 작업들의 병렬 실행이 가능하도록 하였다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 5</title>
+      <link>http://localhost:1313/database/database-5/</link>
+      <pubDate>Sun, 08 Sep 2024 02:07:45 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-5/</guid>
+      <description>&lt;h3 id=&#34;transparent-data-encryption&#34;&gt;Transparent data encryption&lt;/h3&gt;
+&lt;p&gt;TDE는 MS, IBM, Oracle 에서 데이터베이스 파일 암호화를 위해 적용하는 암호화 기술이다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Oracle이 쓰므로 MySQL도 동일하게 TDE를 사용한다.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;TDE는 파일 레벨로 암호화를 진행하기 때문에, 일반적으로 테이블 단위의 암호화를 수행한다.&lt;/p&gt;
+&lt;p&gt;TDE는 휴지 상태의 데이터 보호 문제를 해결하며, 하드 드라이브와 궁극적으로는 백업 미디어에서 데이터베이스를 암호화한다.&lt;/p&gt;
+&lt;p&gt;조금은 크고 무거운 단위의 파일들을 암호화하는 것에 집중되는 듯 하다.&lt;/p&gt;
+&lt;h3 id=&#34;application-level-data-encryption&#34;&gt;Application level data encryption&lt;/h3&gt;
+&lt;p&gt;데이터베이스에 데이터를 저장하기 전에 애플리케이션에서 암호화를 수행하여 저장하는 방법이다. 이 방법은 데이터베이스는 데이터를 받아 적재하는 역할만 수행하고, 애플리케이션이 암호화 및 복호화 작업을 수행하는 방식이다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Network 1</title>
+      <link>http://localhost:1313/network/network-1/</link>
+      <pubDate>Sat, 07 Sep 2024 22:15:55 +0900</pubDate>
+      <guid>http://localhost:1313/network/network-1/</guid>
+      <description>&lt;h3 id=&#34;프로토콜-스택에서-이더넷부터의-동작&#34;&gt;프로토콜 스택에서 이더넷부터의 동작&lt;/h3&gt;
+&lt;p&gt;프로토콜 스택에서 이더넷 프레임은 48비트 목적지 주소와 16비트 이더넷 유형 필드를 포함하는데, 이 목적지 주소는 링크 계층 주소 또는 MAC주소라고 불린다.&lt;/p&gt;
+&lt;p&gt;이더넷 유형 필드 값 중에 (16진법 기준) 0x0800 은 IPv4, 0x0806은 ARP, 0x86DD는 IPv6를 표시하는 표시자가 된다. MAC 주소가 일치한다면 이후 이더넷 유형 필드를 확인하여 알맞는 3계층 프로토콜이 처리할 수 있도록 돕는다.&lt;/p&gt;
+&lt;h3 id=&#34;3계층-동작&#34;&gt;3계층 동작&lt;/h3&gt;
+&lt;p&gt;데이터그램 안의 IP주소 등 항목을 검사한다. 이후 본인 주소와 일치하고 데이터그램의 헤더에 오류가 없을 경우, 8비트 IPv4 프로토콜 필드 (IPv6에서는 Next protocol field)를 사용하여 어떤 프로토콜을 호출해야하는지 결정한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 4</title>
+      <link>http://localhost:1313/database/database-4/</link>
+      <pubDate>Sat, 07 Sep 2024 18:59:35 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-4/</guid>
+      <description>&lt;h3 id=&#34;mntdata와-mntlog-가-다른-디스크에-마운트됨을-확인하기&#34;&gt;/mnt/data와 /mnt/log 가 다른 디스크에 마운트됨을 확인하기&lt;/h3&gt;
+&lt;p&gt;단순히 경로를 표시하는 것만으로는 확실하게 물리적 격리가 이루어지고 있는지 확인할 수 없다.
+각 마운트 지점이 물리적으로 서로 다른 디스크에 매핑되어 있는지 확인하려면, 다음과 같은 명령어를 사용한다.&lt;/p&gt;
+&lt;h4 id=&#34;1-df&#34;&gt;1. &lt;code&gt;df&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;df&lt;/code&gt; 는 파일 시스템의 디스크 사용량을 확인하는 데 사용되며, 각 마운트 포인트가 어떤 디스크에 연결되어 있는지 확인 가능하다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df -h /mnt/data /mnt/log
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;해당 명령어 실행 시 아래와 같이 &lt;code&gt;/mnt/data&lt;/code&gt;와 &lt;code&gt;/mnt/log&lt;/code&gt; 가 각각 어떤 디스크와 디바이스에 마운트되어 있는지 확인할 수 있다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 3</title>
+      <link>http://localhost:1313/database/database-3/</link>
+      <pubDate>Thu, 05 Sep 2024 18:29:23 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-3/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;MySQL의 사례를 기반으로 설명하는 경우가 있음.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h3 id=&#34;논리적-격리와-물리적-격리&#34;&gt;논리적 격리와 물리적 격리&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;1. 물리적 격리&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;물리적 격리는 데이터베이스의 데이터 파일을 별도의 물리적 디스크나 저장 장치에 분리하여 저장하는 방법이다.
+MySQL에서는 다음과 같은 방식으로 물리적 격리를 구현하고 있다고 한다(물론 다른 옵션이 많을 듯).&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;데이터 파일과 로그 파일 분리: MySQL데이터베이스는 데이터파일다 로그 파일을 사용한다. 성능 최적화를 위헤 데이터 파일과 로그 파일을 서로 다른 물리적 디스크에 저장하는 것이 일반적이다. 이를 통해 디스크 I/O를 분산시켜 성능을 향상시킬 수 있다.&lt;/li&gt;
+&lt;li&gt;파일시스템 마운트 포인트: MySQL의 데이터 디렉토리를 별도의 디스크에 마운트된 파일 시스템에 설정하여 데이터 파일과 로그 파일을 저장 가능하다. =&amp;gt; 이게 왜 물리? 각기 다른 디스크를 의미하는 걸지도&amp;hellip;!&lt;/li&gt;
+&lt;li&gt;RAID구성: 성능 및 데이터 보호를 위해 RAID구성을 사용하는 것도 물리적 격리의 한 형태이다. &lt;a href=&#34;https://devocean.sk.com/blog/techBoardDetail.do?ID=163608&#34;&gt;RAID&lt;/a&gt;를 통해 데이터가 여러 디스크에 걸쳐 저장되므로 장애 발생 시 데이터 손실을 최소화하고 성능을 최적화할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;2. 논리적 격리&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 2</title>
+      <link>http://localhost:1313/database/database-2/</link>
+      <pubDate>Sat, 31 Aug 2024 23:36:53 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-2/</guid>
+      <description>&lt;h3 id=&#34;데이터베이스-시스템-제작에-필요한-것들&#34;&gt;데이터베이스 시스템 제작에 필요한 것들&lt;/h3&gt;
+&lt;p&gt;데이터베이스 시스템을 제작하기 위해서는 다음과 같은 사항들이 필요하다.&lt;/p&gt;
+&lt;h4 id=&#34;1-기본-아키텍쳐-설계&#34;&gt;1. 기본 아키텍쳐 설계&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;스토리지 엔진: 데이터 저장 및 검색을 위한 엔진 설계. 여러 인덱싱 기술과 자료구조를 사용하여 구현함.&lt;/li&gt;
+&lt;li&gt;데이터 파일 관리: 데이터를 저장하기 위한 파일 포맷과 파일 시스템 상에서의 효율적인 관리 방법을 설계해야 함.&lt;/li&gt;
+&lt;li&gt;버퍼 관리: 데이터 파일과 메모리 간의 데이터를 효율적으로 교환하기 위한 버퍼 풀 관리가 필요함.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;2-sql-파서-및-실행기&#34;&gt;2. SQL 파서 및 실행기&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;SQL파서: SQL을 파싱하여 필요한 정보를 추출한다. 이후 이를 쿼리 실행기에 전달하여 기능을 수행한다.&lt;/li&gt;
+&lt;li&gt;쿼리 최적화기: 효율적인 실행 계획 생성을 위해 쿼리를 최적화하는 알고리즘을 설계한다.&lt;/li&gt;
+&lt;li&gt;쿼리 실행기: 최적화된 실행 계획에 따라 실제로 데이터를 조회하거나 변경하는 모듈.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;3-트랜잭션-관리&#34;&gt;3. 트랜잭션 관리&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;ACID 속성 구현: 트랜잭션의 가장 기본적인 원칙을 보장하는 메커니즘 설계 필요.&lt;/li&gt;
+&lt;li&gt;Lock 구현: 임계 영역 내 데이터의 무결성 보장을 위해 다중 접근을 통재하는 매커니즘 구현 필요.&lt;/li&gt;
+&lt;li&gt;저널링 및 로깅: 트랜잭션 기록을 통한 데이터 복구 메커니즘을 위한 로그 시스템 설계 필요.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;4-보안-및-사용자-관리&#34;&gt;4. 보안 및 사용자 관리&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;인증: 사용자 인증을 위한 메커니즘 설계(Oauth or Kerberos).&lt;/li&gt;
+&lt;li&gt;권한 부여: 사용자의 데이터베이스 객체에 대한 접근 권한 관리를 위한 권한 부여시스템 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;5-네트워크-프로토콜-및-통신&#34;&gt;5. 네트워크 프로토콜 및 통신&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Client-Server 통신 프로토콜: 클라이언트와 서버 간 데이터베이스 쿼리와 결과를 주고받기 위한 프로토콜 설계.&lt;/li&gt;
+&lt;li&gt;연결 관리: 다수의 클라이언트가 접속 가능하도록 연결 풀링 및 연결 관리 시스템 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;6-복제-및-백업&#34;&gt;6. 복제 및 백업&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;데이터 복제: 고가용성을 위한 데이터베이스 복제 메커니즘 구현.&lt;/li&gt;
+&lt;li&gt;백업 및 복구: 데이터 손실 시 복구할 수 있는 백업 전략과 복구 절차 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;7-운영-및-모니터링-도구&#34;&gt;7. 운영 및 모니터링 도구&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;모니터링: 데이터베이스의 성능과 상태 모니터링을 위한 도구 개발&lt;/li&gt;
+&lt;li&gt;로깅 및 감사: 데이터베이스의 활동 전체를 기록하여 보안을 강화하고 문제를 해결할 수 있는 시스템 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;8-성능-최적화&#34;&gt;8. 성능 최적화&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;인덱싱: 데이터 검색 속도 향상을 위한 다양한 인덱스 구조 설계.&lt;/li&gt;
+&lt;li&gt;캐싱: 자주 사용하는 데이터를 빠르게 액세스하기 위한 캐싱 메커니즘 설계.&lt;/li&gt;
+&lt;li&gt;파티셔닝: 대규모 데이터베이스의 성능을 높이기 위해 데이터를 파티셔닝하는 전략 설계.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;9-테스트-및-검증&#34;&gt;9. 테스트 및 검증&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;단위 테스트: 각 기능이 올바르게 작동하는지 확인하기 위한 단위 테스트 작성.&lt;/li&gt;
+&lt;li&gt;성능 테스트: 시스템이 다양한 부하 조건에서 안정적으로 동작하는지 확인하기 위한 성능 테스트 수행.&lt;/li&gt;
+&lt;li&gt;안정성 테스트: 장기간 운영 시 시스템 안정성 보장하기 위함.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;온전한 데이터베이스 시스템 설계를 위해서는 위와 같은 다양한 사항들이 맞물려 설계되어야한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Database 1</title>
+      <link>http://localhost:1313/database/database-1/</link>
+      <pubDate>Fri, 30 Aug 2024 16:53:28 +0900</pubDate>
+      <guid>http://localhost:1313/database/database-1/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;데이터베이스 수강하기 전에 공부해두기&lt;/p&gt;
+&lt;p&gt;알고 있는 사항&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;SQLD자격증을 취득한 정도의 SQL 문법 이해도&lt;/li&gt;
+&lt;li&gt;트랜잭션, ACID, 트랜잭션 격리 수준 등&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;공부할 사항&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;데이터베이스 엔진을 만들기 위해서 필요한 것들&lt;/li&gt;
+&lt;li&gt;데이터베이스 엔진 구축하기&lt;/li&gt;
+&lt;/ol&gt;&lt;/blockquote&gt;
+&lt;h3 id=&#34;메모리와-디스크-간의-데이터-관리&#34;&gt;메모리와 디스크 간의 데이터 관리&lt;/h3&gt;
+&lt;p&gt;데이터베이스 시스템은 일반적으로 메모리 (RAM)과 디스크 (HDD/SSD)를 함께 사용하여 데이터 관리.
+- 메모리: 고속 액세스가 필요한 임시 데이터를 저장함. 예를 들어, 자주 액세스되는 데이터 페이지를 메모리에 캐싱하여 데이터베이스의 응답을 높이는 등의 처리 가능.
+- 디스크: 영구 데이터 저장에 사용. 디스크에 저장된 데이터는 시스템이 재시작되어도 유지.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>V8 Isolate 2 | Nohv</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+난잡한 지식을 머릿속으로 정렬하고, 순서대로 글에 적습니다.
+v8 isolate는 v8엔진의 기능 중 하나로, v8 자체를 복제하여 별도의 독립된 Javascript 실행 환경을 제공하는 기능입니다.
+해당 기능은 별도의 heap 메모리 공간, 별도의 garbage collector 등 격리된 환경을 조성하게 된다는 것에 매우 큰 장점을 가집니다.
+Javascript에서 비동기 제어를 위해 동작하는 Event Loop 및 Call Stack 또한 별도로 가지게 됩니다.
+이러한 컨셉을 통해 우리는 단일 스레드에서도 격리된 환경을 조성하여 javascript 코드 번들을 실행할 수 있습니다.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/network/v8-isolate-2/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5af69be6bb334dea411b841952ea2c4a3997158adca03033089abb36903fd526.css" integrity="sha256-Wvab5rszTepBG4QZUuosSjmXFYrcoDAzCJq7NpA/1SY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/network/v8-isolate-2/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Nohv (Alt + H)">Nohv</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/database/" title="Database">
+                    <span>Database</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/network/" title="Network">
+                    <span>Network</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/os/" title="OS">
+                    <span>OS</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      V8 Isolate 2
+    </h1>
+    <div class="post-meta"><span title='2024-09-17 02:49:30 +0900 KST'>September 17, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><blockquote>
+<p>난잡한 지식을 머릿속으로 정렬하고, 순서대로 글에 적습니다.</p></blockquote>
+<p>v8 isolate는 v8엔진의 기능 중 하나로, v8 자체를 복제하여 별도의 독립된 Javascript 실행 환경을 제공하는 기능입니다.</p>
+<p>해당 기능은 별도의 heap 메모리 공간, 별도의 garbage collector 등 격리된 환경을 조성하게 된다는 것에 매우 큰 장점을 가집니다.
+Javascript에서 비동기 제어를 위해 동작하는 Event Loop 및 Call Stack 또한 별도로 가지게 됩니다.
+이러한 컨셉을 통해 우리는 단일 스레드에서도 격리된 환경을 조성하여 javascript 코드 번들을 실행할 수 있습니다.</p>
+<p>일반적으로는 격리된 환경 조성을 위해서는 새로운 환경 초기화가 필수적으로 다가옵니다.
+혹은 타 언어의 경량 스레드를 사용하게 되는 상황이라면 GC를 공유하거나, 메모리 독립적이지 못하는 경우가 있습니다.</p>
+<p>v8-isolate를 사용하는 것은 이러한 단점을 충분히 보완해주며, 아주 작은 오버헤드로 격리된 환경을 조성할 수 있도록 돕습니다.</p>
+<p>이는 단일 스레드에서 실행되는 독립적인 비동기 작업들에 대해 안정성을 보장해주며, 추가적인 보안 조치 등을 수행하여 온전한 격리 공간을 조성할 수 있습니다.</p>
+<p>v8-isolate에서는 메모리 제한을 걸 수 있지만, CPU 점유율을 조정할 수 없습니다.</p>
+<p>따라서 우리는 이러한 단점을 cgroup을 통해 조정하며 격리 환경에 견고함을 더할 수 있습니다.</p>
+<p>혹은, 실제 운영체제 단에서의 스레드를 생성하여 CPU 점유율을 명확하게 관리하고, 병렬처리를 진행할 수 있습니다.</p>
+<p>헷갈리는 부분을 조금 더 정리하면 다음과 같다.</p>
+<ol>
+<li>싱글 스레드 환경에서 여러 v8-isolate를 생성하여 비동기 작업을 처리하는 것은 격리된 환경 조성에 탁월하다.</li>
+</ol>
+<ul>
+<li>v8-isolate는 독립적인 힙과 실행 컨텍스트를 가지므로, 여러 isolate가 하나의 스레드에서 동작하고 있을 때에도 서로 상태나 메모리에 영향을 주지 않는다.</li>
+</ul>
+<ol start="2">
+<li>이 경우 v8-isoalte에 대한 스케쥴링은 부모 스레드에서 담당한다.</li>
+</ol>
+<ul>
+<li>여러 isolate가 있을 때, 이 isolate들이 어떤 순서로 또는 어떤 방식으로 실행될지에 대한 결정은 해당 isolate를 실행하는 스레드에 달려 있다.</li>
+<li>부모 스레드는 각 isolate 작업을 스케쥴링하고, 필요 시 작업 교체 및 종료를 진행한다.</li>
+</ul>
+<ol start="3">
+<li>v8-isolate는 각각 독립적인 실행 컨텍스트를 가지지만, 이벤트 루프와 같이 스케쥴링은 부모가 진행한다.</li>
+</ol>
+<ul>
+<li>각 isolate는 자체적인 실행 context(힙과 스택)를 가지지만, 이벤트 루프나 스케쥴링과 관련한 작업은 부모 스레드에서 이뤄진다.</li>
+<li>멀티 스레딩 환경에서는 각각이 부모 스레드 없이 동작하기 때문에 각각의 런타임에서 스케쥴링을 진행한다.</li>
+<li>또한 비동기 작업의 경우, v8자체의 이벤트 루프나 외부 작업 큐와 연계하여 비동기 작업을 수행한다.</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">Nohv</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

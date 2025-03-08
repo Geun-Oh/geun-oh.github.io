@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Path &amp; Exec | Nohv</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+ls나 cd는 뭔데 그냥 입력해도 동작하나?
+예약어의 기원이 궁금해
+환경변수 정리
+
+cc: c compiler
+gcc: gnu compiler collection. GNU 프로젝트의 일환으로 개발되어 쓰이는 컴파일러.
+
+리눅스에서는 gcc가 기본으로, gcc가 자동으로 cc로 연결되어 사용되도록 함.
+일반적인 실행파일의 경우, 해당 실행파일이 존재하는 디렉토리에 접근해야 실행 가능하게된다.
+일반적인 바이너리 파일을 열게 되면, 다음과 같이 나온다(2진수 포맷).
+이렇게 기계어로 정리된 파일을 실행파일로 사용하게 된다.
+xxd -b binary
+---
+...
+00e625a8: 10111010 01010101 01001111 10110010 11010101 11010110  .UO...
+00e625ae: 11100111 11000101 01011111 01001000 11101111 11110001  .._H..
+00e625b4: 11111110 11111101 00110010 00000010 11000100 10100100  ..2...
+00e625ba: 00000000 00111011 11011011 00110000 10110100 11001011  .;.0..
+00e625c0: 01101011 11100110 01000000 11110101 10000001 10010001  k.@...
+00e625c6: 10100010 11010100 00011100 11001100 11111101 00101001  .....)
+00e625cc: 10000011 10111010 10011001 11111010 11101010 00110000  .....0
+00e625d2: 00001011 10110110 00100000 01101010 10011000 10011100  .. j..
+00e625d8: 00011000 01110010 10101110 00001001 10111001 11111001  .r....
+00e625de: 10100101 10010001 00010110 00110010 11111000 10111010  ...2..
+00e625e4: 00111100 11001101 11011000 10100111 00011010 10111100  &lt;.....
+00e625ea: 10110111 11101110 00100100 10100101 11111100 11110011  ..$...
+00e625f0: 10110010 01110010                                      .r
+환경변수 파일은 이러한 바이너리 파일을 글로벌하게 수행할 수 있도록 돕는 역할을 한다.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/os/path/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.45a2a75667a331e76c51b2e821e2985f426b0fd9f5f0a91ffa84983c75535302.css" integrity="sha256-RaKnVmejMedsUbLoIeKYX0JrD9n18Kkf&#43;oSYPHVTUwI=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/os/path/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Nohv (Alt + H)">Nohv</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/database/" title="Database">
+                    <span>Database</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/network/" title="Network">
+                    <span>Network</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/os/" title="OS">
+                    <span>OS</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Path &amp; Exec
+    </h1>
+    <div class="post-meta"><span title='2024-09-30 01:53:19 +0900 KST'>September 30, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><blockquote>
+<p>ls나 cd는 뭔데 그냥 입력해도 동작하나?
+예약어의 기원이 궁금해</p></blockquote>
+<h3 id="환경변수-정리">환경변수 정리<a hidden class="anchor" aria-hidden="true" href="#환경변수-정리">#</a></h3>
+<ul>
+<li>cc: c compiler</li>
+<li>gcc: gnu compiler collection. GNU 프로젝트의 일환으로 개발되어 쓰이는 컴파일러.</li>
+</ul>
+<p>리눅스에서는 gcc가 기본으로, gcc가 자동으로 cc로 연결되어 사용되도록 함.</p>
+<p>일반적인 실행파일의 경우, 해당 실행파일이 존재하는 디렉토리에 접근해야 실행 가능하게된다.</p>
+<p>일반적인 바이너리 파일을 열게 되면, 다음과 같이 나온다(2진수 포맷).</p>
+<p>이렇게 기계어로 정리된 파일을 실행파일로 사용하게 된다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xxd -b binary
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>00e625a8: <span style="color:#ae81ff">10111010</span> <span style="color:#ae81ff">01010101</span> <span style="color:#ae81ff">01001111</span> <span style="color:#ae81ff">10110010</span> <span style="color:#ae81ff">11010101</span> <span style="color:#ae81ff">11010110</span>  .UO...
+</span></span><span style="display:flex;"><span>00e625ae: <span style="color:#ae81ff">11100111</span> <span style="color:#ae81ff">11000101</span> <span style="color:#ae81ff">01011111</span> <span style="color:#ae81ff">01001000</span> <span style="color:#ae81ff">11101111</span> <span style="color:#ae81ff">11110001</span>  .._H..
+</span></span><span style="display:flex;"><span>00e625b4: <span style="color:#ae81ff">11111110</span> <span style="color:#ae81ff">11111101</span> <span style="color:#ae81ff">00110010</span> <span style="color:#ae81ff">00000010</span> <span style="color:#ae81ff">11000100</span> <span style="color:#ae81ff">10100100</span>  ..2...
+</span></span><span style="display:flex;"><span>00e625ba: <span style="color:#ae81ff">00000000</span> <span style="color:#ae81ff">00111011</span> <span style="color:#ae81ff">11011011</span> <span style="color:#ae81ff">00110000</span> <span style="color:#ae81ff">10110100</span> <span style="color:#ae81ff">11001011</span>  .;.0..
+</span></span><span style="display:flex;"><span>00e625c0: <span style="color:#ae81ff">01101011</span> <span style="color:#ae81ff">11100110</span> <span style="color:#ae81ff">01000000</span> <span style="color:#ae81ff">11110101</span> <span style="color:#ae81ff">10000001</span> <span style="color:#ae81ff">10010001</span>  k.@...
+</span></span><span style="display:flex;"><span>00e625c6: <span style="color:#ae81ff">10100010</span> <span style="color:#ae81ff">11010100</span> <span style="color:#ae81ff">00011100</span> <span style="color:#ae81ff">11001100</span> <span style="color:#ae81ff">11111101</span> <span style="color:#ae81ff">00101001</span>  .....<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>00e625cc: <span style="color:#ae81ff">10000011</span> <span style="color:#ae81ff">10111010</span> <span style="color:#ae81ff">10011001</span> <span style="color:#ae81ff">11111010</span> <span style="color:#ae81ff">11101010</span> <span style="color:#ae81ff">00110000</span>  .....0
+</span></span><span style="display:flex;"><span>00e625d2: <span style="color:#ae81ff">00001011</span> <span style="color:#ae81ff">10110110</span> <span style="color:#ae81ff">00100000</span> <span style="color:#ae81ff">01101010</span> <span style="color:#ae81ff">10011000</span> <span style="color:#ae81ff">10011100</span>  .. j..
+</span></span><span style="display:flex;"><span>00e625d8: <span style="color:#ae81ff">00011000</span> <span style="color:#ae81ff">01110010</span> <span style="color:#ae81ff">10101110</span> <span style="color:#ae81ff">00001001</span> <span style="color:#ae81ff">10111001</span> <span style="color:#ae81ff">11111001</span>  .r....
+</span></span><span style="display:flex;"><span>00e625de: <span style="color:#ae81ff">10100101</span> <span style="color:#ae81ff">10010001</span> <span style="color:#ae81ff">00010110</span> <span style="color:#ae81ff">00110010</span> <span style="color:#ae81ff">11111000</span> <span style="color:#ae81ff">10111010</span>  ...2..
+</span></span><span style="display:flex;"><span>00e625e4: <span style="color:#ae81ff">00111100</span> <span style="color:#ae81ff">11001101</span> <span style="color:#ae81ff">11011000</span> <span style="color:#ae81ff">10100111</span> <span style="color:#ae81ff">00011010</span> <span style="color:#ae81ff">10111100</span>  &lt;.....
+</span></span><span style="display:flex;"><span>00e625ea: <span style="color:#ae81ff">10110111</span> <span style="color:#ae81ff">11101110</span> <span style="color:#ae81ff">00100100</span> <span style="color:#ae81ff">10100101</span> <span style="color:#ae81ff">11111100</span> <span style="color:#ae81ff">11110011</span>  ..$...
+</span></span><span style="display:flex;"><span>00e625f0: <span style="color:#ae81ff">10110010</span> <span style="color:#ae81ff">01110010</span>                                      .r
+</span></span></code></pre></div><p>환경변수 파일은 이러한 바이너리 파일을 글로벌하게 수행할 수 있도록 돕는 역할을 한다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo $PATH
+</span></span></code></pre></div><p>ls도 이러한 실행 파일을 수행하는 것과 동일하다. ls의 위치를 알아보자.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># which ls는 alias to ls -G라고만 뜬다. root권한으로 확인하자.</span>
+</span></span><span style="display:flex;"><span>sudo which ls
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>/bin/ls
+</span></span></code></pre></div><p>해당 경로로 이동해서 어떤 파일이 존재하나 살펴보자.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd /bin
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>         chmod     dash      df        expr      ksh       ln        mv        pwd       rmdir     stty      test      zsh
+</span></span><span style="display:flex;"><span>bash      cp        date      echo      hostname  launchctl ls        pax       realpath  sh        sync      unlink
+</span></span><span style="display:flex;"><span>cat       csh       dd        ed        kill      link      mkdir     ps        rm        sleep     tcsh      wait4path
+</span></span></code></pre></div><p>평소 자주 보던 친구들이 존재한다.
+말고도 <code>/usr/bin</code> 아래에 더더더욱 많은 파일들이 존재한다.</p>
+<p>평소 우리가 자주 사용하는 친구들이 전부 이곳에 존재했다.</p>
+<h4 id="path">Path<a hidden class="anchor" aria-hidden="true" href="#path">#</a></h4>
+<p>는 <code>:</code>로 구별되는 여러 경로가 포함된 문자열이며, 셸은 경로가 포함되지 않은 명령어가 입력되었을 때 path를 <code>:</code>를 기준으로 나눈 뒤 그 경로들을 모두 입력된 명령어 앞에 붙여보면서 실행 가능한지 여부를 확인한다.</p>
+<blockquote>
+<p>그럼 여러 path가 가능하면은
+먼저 검색되는 순서대로. path 기준 앞쪽에 있어야 한다.</p></blockquote>
+<h3 id="shell">Shell<a hidden class="anchor" aria-hidden="true" href="#shell">#</a></h3>
+<p>셸(Shell)은 명령어 입력기이자 실행기로, 명령어를 해석하고 실행하는 <strong>인터프리터</strong>이다.
+명령어는 크게 2가지로 나뉜다.</p>
+<ol>
+<li>내부 명령어: 셸 자체에서 제공하는 명령어. <code>cd</code>, <code>echo</code>, <code>export</code> 같은 명령어는 셸에 내장되어 있어 별도의 바이너리 파일이 존재하지 않는다.</li>
+<li>외부 명령어: 시스템에 설치된 프로그램이나 스크립트를 실행한다. <code>ls</code>, <code>grep</code>, <code>python</code>과 같은 명령어는 전부 시스템 특정 경로 내에 존재하는 파일로 실행된다. 이 경우, 셸은 <code>PATH</code>에 명시된 디렉토리를 통해 파일을 찾고 실행한다.</li>
+</ol>
+<p>실제로 <code>which pwd</code>를 입력하면 아래와 같이 뜬다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>which pwd
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>pwd: shell built-in command
+</span></span></code></pre></div><p>이러면 바이너리 파일이 제공되지 않는 내장 명령어임을 알 수 있다.</p>
+<p>이외에 이러한 경우도 존재한다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>which cd
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>cd <span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> __gvm_is_function __gvm_oldcd
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>		__gvm_oldcd $*
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>	local dot_go_version dot_go_pkgset rslt
+</span></span><span style="display:flex;"><span>	local defaults_go_name defaults_go_pkgset
+</span></span><span style="display:flex;"><span>	local defaults_resolved<span style="color:#f92672">=</span>false
+</span></span><span style="display:flex;"><span>	local defaults_hash
+</span></span><span style="display:flex;"><span>	defaults_hash<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$GVM_ROOT<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">]]</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>		display_error <span style="color:#e6db74">&#34;GVM_ROOT not set. Please source \$GVM_ROOT/scripts/gvm&#34;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> $?
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>이렇게 내장 명령어의 경우에도 셸 설정을 통해 별도의 설정을 추가해주는 경우, 해당 설정이 포함된 형태로 명령어가 재구성된다.</p>
+<p>현재 나의 cd명령어는 go 버전 관리 도구인 gvm 설정과 관련한 작업이 추가되어 있기에 이렇게 로직이 드러난다.</p>
+<p>해당 세션에서만 설정을 제거하여 실재 내장 명령어인지 다시 확인해보자.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>unset -f cd
+</span></span><span style="display:flex;"><span>which cd
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>cd: shell built-in command
+</span></span></code></pre></div><p>세션 한정으로 설정을 제거하면, 바로 내장 명령어임이 드러난다.</p>
+<p>영구적인 설정 제거를 원한다면 셸 설정 파일에서 제거하자.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">Nohv</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

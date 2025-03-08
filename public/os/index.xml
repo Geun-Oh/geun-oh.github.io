@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Os on Nohv</title>
+    <link>http://localhost:1313/os/</link>
+    <description>Recent content in Os on Nohv</description>
+    <generator>Hugo -- 0.145.0</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 10 Nov 2024 21:38:17 +0900</lastBuildDate>
+    <atom:link href="http://localhost:1313/os/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nix 1</title>
+      <link>http://localhost:1313/os/nix-1/</link>
+      <pubDate>Sun, 10 Nov 2024 21:38:17 +0900</pubDate>
+      <guid>http://localhost:1313/os/nix-1/</guid>
+      <description>&lt;h2 id=&#34;nixos&#34;&gt;NixOS&lt;/h2&gt;
+&lt;p&gt;NixOS 는 리눅스 배포판 중 하나로, 평소 잘 아는 Debian, Red Hat(RHEL) 등과는 별도의 계열을 가지는 배포판이다.
+&lt;code&gt;Nix 패키지 관리 시스템&lt;/code&gt; 을 기반으로 설계되어, 아래와 같은 특성을 가진다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;재현성: 소프트웨어 패키지를 격리된 환경에서 빌드하고, 의존성을 통제해 높은 재현성을 확보한다. 실제 작성 시에도 외부 패키지들의 버전을 세밀하게 기록하여 재현에 차질이 없도록 한다.&lt;/li&gt;
+&lt;li&gt;선언적: 소프트웨어 패키징에 특화된 선언적 프로그래밍 언어 Nix를 사용한다.&lt;/li&gt;
+&lt;li&gt;신뢰성: 한 패키지를 업데이트하는 일이 다른 패키지를 망가뜨리지 않도록 보장한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Nix를 사용하여 나의 로컬 기기 세팅을 명세화해두면, 추후 마이그레이션 등에서 큰 이점을 가져올 수 있다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Path &amp; Exec</title>
+      <link>http://localhost:1313/os/path/</link>
+      <pubDate>Mon, 30 Sep 2024 01:53:19 +0900</pubDate>
+      <guid>http://localhost:1313/os/path/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;ls나 cd는 뭔데 그냥 입력해도 동작하나?
+예약어의 기원이 궁금해&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h3 id=&#34;환경변수-정리&#34;&gt;환경변수 정리&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;cc: c compiler&lt;/li&gt;
+&lt;li&gt;gcc: gnu compiler collection. GNU 프로젝트의 일환으로 개발되어 쓰이는 컴파일러.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;리눅스에서는 gcc가 기본으로, gcc가 자동으로 cc로 연결되어 사용되도록 함.&lt;/p&gt;
+&lt;p&gt;일반적인 실행파일의 경우, 해당 실행파일이 존재하는 디렉토리에 접근해야 실행 가능하게된다.&lt;/p&gt;
+&lt;p&gt;일반적인 바이너리 파일을 열게 되면, 다음과 같이 나온다(2진수 포맷).&lt;/p&gt;
+&lt;p&gt;이렇게 기계어로 정리된 파일을 실행파일로 사용하게 된다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;xxd -b binary
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625a8: &lt;span style=&#34;color:#ae81ff&#34;&gt;10111010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01010101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01001111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11010101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11010110&lt;/span&gt;  .UO...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625ae: &lt;span style=&#34;color:#ae81ff&#34;&gt;11100111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11000101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01011111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01001000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11101111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11110001&lt;/span&gt;  .._H..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625b4: &lt;span style=&#34;color:#ae81ff&#34;&gt;11111110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00000010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11000100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10100100&lt;/span&gt;  ..2...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625ba: &lt;span style=&#34;color:#ae81ff&#34;&gt;00000000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00111011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11011011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10110100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11001011&lt;/span&gt;  .;.0..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625c0: &lt;span style=&#34;color:#ae81ff&#34;&gt;01101011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11100110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01000000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11110101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10000001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10010001&lt;/span&gt;  k.@...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625c6: &lt;span style=&#34;color:#ae81ff&#34;&gt;10100010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11010100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00011100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11001100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00101001&lt;/span&gt;  .....&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625cc: &lt;span style=&#34;color:#ae81ff&#34;&gt;10000011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10011001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11101010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110000&lt;/span&gt;  .....0
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625d2: &lt;span style=&#34;color:#ae81ff&#34;&gt;00001011&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10110110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00100000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01101010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10011000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10011100&lt;/span&gt;  .. j..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625d8: &lt;span style=&#34;color:#ae81ff&#34;&gt;00011000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10101110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00001001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111001&lt;/span&gt;  .r....
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625de: &lt;span style=&#34;color:#ae81ff&#34;&gt;10100101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10010001&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00010110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111010&lt;/span&gt;  ...2..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625e4: &lt;span style=&#34;color:#ae81ff&#34;&gt;00111100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11001101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11011000&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10100111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00011010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10111100&lt;/span&gt;  &amp;lt;.....
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625ea: &lt;span style=&#34;color:#ae81ff&#34;&gt;10110111&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11101110&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00100100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10100101&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11111100&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;11110011&lt;/span&gt;  ..$...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;00e625f0: &lt;span style=&#34;color:#ae81ff&#34;&gt;10110010&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;01110010&lt;/span&gt;                                      .r
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;환경변수 파일은 이러한 바이너리 파일을 글로벌하게 수행할 수 있도록 돕는 역할을 한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>OS 2</title>
+      <link>http://localhost:1313/os/os-2/</link>
+      <pubDate>Wed, 11 Sep 2024 11:22:04 +0900</pubDate>
+      <guid>http://localhost:1313/os/os-2/</guid>
+      <description>&lt;h3 id=&#34;v8-isolate-study&#34;&gt;V8-isolate study&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;결국 독립적인 heap 메모리 할당, GC 등을 통하여 독립적인 실행 환경을 구성하도록 해준다.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/nodejs/node/blob/main/src/node_worker.cc&#34;&gt;https://github.com/nodejs/node/blob/main/src/node_worker.cc&lt;/a&gt;
+위 파일에서 확인 시 Node.js의 &lt;code&gt;worker_thread&lt;/code&gt; 또한 내부적으로 v8-isolate를 사용하여 구현된 것을 알 수 있는데,
+그렇기에 동작이 매우 유사하다.&lt;/p&gt;
+&lt;h3 id=&#34;경량-스레드&#34;&gt;경량 스레드&lt;/h3&gt;
+&lt;p&gt;경량 스레드는 (Light weight thread) 는 일반적인 스레드와 달리 운영체제 커널에서 관리되지 않고 유저 레벨에서 관리되는 스레드이다.
+효율적인 멀티스레딩 환경을 제공하고, 커널의 간섭 없이 애플리케이션 수준에서 이를 스케쥴링 및 컨텍스트 스위칭을 할 수 있도록 한다.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>OS 1</title>
+      <link>http://localhost:1313/os/os-1/</link>
+      <pubDate>Wed, 11 Sep 2024 11:03:09 +0900</pubDate>
+      <guid>http://localhost:1313/os/os-1/</guid>
+      <description>&lt;h3 id=&#34;go-goroutine-java-virtual-thread-nodejs-worker_thread&#34;&gt;Go goroutine, JAVA virtual thread, Node.js worker_thread&lt;/h3&gt;
+&lt;h4 id=&#34;공통점&#34;&gt;공통점&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;경량 스레드&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;이들 모두 경량 스레드 또는 작업 단위로서 동작한다. 즉, 전통적인 운영체제의 스레드보다 훨씬 적은 비용으로 생성되고 스케쥴링될 수 있다.&lt;/li&gt;
+&lt;li&gt;실제 운영체제 스레드보다 메모리 사용량이 적고, 컨텍스트 스위칭 비용이 적다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;동시성 지원&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;모두 동시성 프로그래밍을 지원하며, 여러 작업을 비동기적으로 실행하여 프로그램의 응답성을 높인다.&lt;/li&gt;
+&lt;li&gt;복잡한 병렬 처리나 비동기 작업을 더 쉽게 관리할 수 있도록 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;비동기적 실행&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;병렬 작업을 스케쥴링하고 비동기적으로 실행할 수 있다. 작업 완료를 기다리지 않고 다른 작업을 수행할 수 있도록 설계되었다.&lt;/li&gt;
+&lt;li&gt;특히 I/O 작업에서 효율성을 극대화할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;운영체제 스레드와의 매핑&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;운영체제 스레드를 직접적으로 사용하지 않거나, 많은 수의 작업 단위를 적은 수의 운영체제 스레드에 매핑하여 사용한다. 이를 통해 적은 자원으로 많은 병렬 작업 처리가 가능하다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;차이점&#34;&gt;차이점&lt;/h4&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;특징&lt;/th&gt;
+          &lt;th&gt;Go goroutine&lt;/th&gt;
+          &lt;th&gt;JAVA virtual thread&lt;/th&gt;
+          &lt;th&gt;Node.js worker thread&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;경량성&lt;/td&gt;
+          &lt;td&gt;매우 경량(수백만 개 생성 가능)&lt;/td&gt;
+          &lt;td&gt;경량(기존 스레드보다 적은 자원)&lt;/td&gt;
+          &lt;td&gt;상대적으로 무겁고, 운영체제 스레드 직접 사용(기존 Node.js 런타임 이벤트 루프에서 벗어남)&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;스케쥴링 모델&lt;/td&gt;
+          &lt;td&gt;M스레드(Go 런타임 스케쥴러)&lt;/td&gt;
+          &lt;td&gt;1:1스레드 (JVM관리)&lt;/td&gt;
+          &lt;td&gt;운영체제 스레드(단일 스레드 모델 보완)&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;동시성 처리&lt;/td&gt;
+          &lt;td&gt;고수준 동시성(채널 사용)&lt;/td&gt;
+          &lt;td&gt;일반 스레드 모델과 유사&lt;/td&gt;
+          &lt;td&gt;메세지 패싱&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;비동기 지원&lt;/td&gt;
+          &lt;td&gt;동기/비동기 모두 지원&lt;/td&gt;
+          &lt;td&gt;비동기 및 블로킹 작업 모두 효율적 처리&lt;/td&gt;
+          &lt;td&gt;주로 비동기 처리, 블로킹 시 성능 저하 가능&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;통신 방식&lt;/td&gt;
+          &lt;td&gt;채널을 통한 통신&lt;/td&gt;
+          &lt;td&gt;일반 스레드 API&lt;/td&gt;
+          &lt;td&gt;메세지 패싱(직렬화 필요)&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;요약&#34;&gt;요약&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Go 의 goroutine은 매우 경량화된 동시성 모델로, 수많은 동시성 처리에 최적화되어 있다.&lt;/li&gt;
+&lt;li&gt;JAVA 의 virtual thread는 전통적인 스레드의 사용성을 유지하면서 경량화된 가상 스레드를 통해 동시성을 처리하며, 블로킹 작업에 대한 최적화 제공.&lt;/li&gt;
+&lt;li&gt;Node.js 의 worker thread는 실제 운영체제 스레드를 사용하여 CPU 집약적인 작업을 처리하고, Node.js의 단일 스레드 모델을 보완함.&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+  </channel>
+</rss>

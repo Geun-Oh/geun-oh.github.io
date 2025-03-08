@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Network 1 | Nohv</title>
+<meta name="keywords" content="">
+<meta name="description" content="프로토콜 스택에서 이더넷부터의 동작
+프로토콜 스택에서 이더넷 프레임은 48비트 목적지 주소와 16비트 이더넷 유형 필드를 포함하는데, 이 목적지 주소는 링크 계층 주소 또는 MAC주소라고 불린다.
+이더넷 유형 필드 값 중에 (16진법 기준) 0x0800 은 IPv4, 0x0806은 ARP, 0x86DD는 IPv6를 표시하는 표시자가 된다. MAC 주소가 일치한다면 이후 이더넷 유형 필드를 확인하여 알맞는 3계층 프로토콜이 처리할 수 있도록 돕는다.
+3계층 동작
+데이터그램 안의 IP주소 등 항목을 검사한다. 이후 본인 주소와 일치하고 데이터그램의 헤더에 오류가 없을 경우, 8비트 IPv4 프로토콜 필드 (IPv6에서는 Next protocol field)를 사용하여 어떤 프로토콜을 호출해야하는지 결정한다.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/network/network-1/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5af69be6bb334dea411b841952ea2c4a3997158adca03033089abb36903fd526.css" integrity="sha256-Wvab5rszTepBG4QZUuosSjmXFYrcoDAzCJq7NpA/1SY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/network/network-1/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Nohv (Alt + H)">Nohv</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/database/" title="Database">
+                    <span>Database</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/network/" title="Network">
+                    <span>Network</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/os/" title="OS">
+                    <span>OS</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Network 1
+    </h1>
+    <div class="post-meta"><span title='2024-09-07 22:15:55 +0900 KST'>September 7, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h3 id="프로토콜-스택에서-이더넷부터의-동작">프로토콜 스택에서 이더넷부터의 동작<a hidden class="anchor" aria-hidden="true" href="#프로토콜-스택에서-이더넷부터의-동작">#</a></h3>
+<p>프로토콜 스택에서 이더넷 프레임은 48비트 목적지 주소와 16비트 이더넷 유형 필드를 포함하는데, 이 목적지 주소는 링크 계층 주소 또는 MAC주소라고 불린다.</p>
+<p>이더넷 유형 필드 값 중에 (16진법 기준) 0x0800 은 IPv4, 0x0806은 ARP, 0x86DD는 IPv6를 표시하는 표시자가 된다. MAC 주소가 일치한다면 이후 이더넷 유형 필드를 확인하여 알맞는 3계층 프로토콜이 처리할 수 있도록 돕는다.</p>
+<h3 id="3계층-동작">3계층 동작<a hidden class="anchor" aria-hidden="true" href="#3계층-동작">#</a></h3>
+<p>데이터그램 안의 IP주소 등 항목을 검사한다. 이후 본인 주소와 일치하고 데이터그램의 헤더에 오류가 없을 경우, 8비트 IPv4 프로토콜 필드 (IPv6에서는 Next protocol field)를 사용하여 어떤 프로토콜을 호출해야하는지 결정한다.</p>
+<blockquote>
+<p>여기서 중요하게 다가오는 것은 해당 필드에 IPv4있 나타내는 4 가 나타날 수 있다는 점이다.
+이 값은 IP 데이터그램의 페이로드 영역 내에 다시금 IP 데이터그램이 존재할 수 있다는 것을 의미한다.
+이는 추후 얘기되는 터널링을 가능하게 만드는 작업이 된다.</p></blockquote>
+<h3 id="4계층-동작">4계층 동작<a hidden class="anchor" aria-hidden="true" href="#4계층-동작">#</a></h3>
+<p>4계층에서는 3계층에서의 주소 기반 역다중화와 비슷하게 포트 기반 역다중화를 활용한다.
+이는 기존 호스트 - 호스트 기반 애플리케이션 통신 구조를 타파하고 프로세스 - 프로세스 기반 통신 구조를 만드는 기반이 된다(라고 교수님이 엄청 말하셨다).</p>
+<p>표준 포트 번호를 지정하는 기구는 IANA다. 포트 번호들은 몇 개의 특별한 범위들로 구분된다.</p>
+<blockquote>
+<p>0 - 1023 =&gt; well-known port
+1024 - 49151 =&gt; registered port
+49152 - 65535 =&gt; dynamic/private port</p></blockquote>
+<p>기본적인 well-known port의 경우 이곳에서 서비스를 제공하려면 관리자 혹은 root 권한을 가진 채 접근해야한다.</p>
+<h3 id="dns">DNS<a hidden class="anchor" aria-hidden="true" href="#dns">#</a></h3>
+<p>IP 는 4 개의 숫자로 구성된 하나의 조합이다. 사람들이 각자 접근하고자 하는 사이트의 숫자 4개를 전부 기억할 수 없는 노릇이기 때문에, 우리는 DNS를 만들어 활용한다.
+여기서 흥미로운 점이 있다면 DNS는 7계층의 프로토콜인데, 동작하기 위해 다른 프로토콜들에 의존하게 된다.</p>
+<p>DNS는 동작을 위해 3, 4계층의 프로토콜을 다음과 같은 방식으로 활용한다.</p>
+<blockquote>
+<p>DNS는 주로 UDP 포트 53을 사용해 요청과 응답을 처리한다.
+때로는 TCP를 사용하기도 한다. 특히 대형 DNS응답이나 연결의 신뢰성을 보장해야하는 경우 TCP를 사용하고 있다.
+DNS요청과 응답 전반에서 IP가 사용된다(사실 통신하는거라 당연한 말. 하드웨어 계층은 굳이 언급하지 않는 듯).</p></blockquote>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">Nohv</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

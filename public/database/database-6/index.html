@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Database 6 | Nohv</title>
+<meta name="keywords" content="">
+<meta name="description" content="데이터베이스 시스템 구현
+세부 구현을 시작한다.
+먼저, 마운트된 공간에 데이터를 적재하고, 해당 데이터를 조회하는 기본적인 기능을 수행하도록 Table 구조체를 작성한다.
+예시 코드를 작성할 때에는 마운트 포인트를 pwd &#43; /data 로 임의 설정했다.
+내부에 테이블 종류에 따라 폴더를 추가 구성하고, 해당 폴더 내부에 .schema 파일을 생성하여 schema 구조를 정의하고, .csv 확장자로 데이터를 적재했다.
+데이터 저장 형태는 여러 형태가 권장되고 있었는데, 별도의 예시를 찾기 어려워 테이블 구조를 저장하고 관리하기 좋은 csv 형태를 선택했다.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/database/database-6/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5af69be6bb334dea411b841952ea2c4a3997158adca03033089abb36903fd526.css" integrity="sha256-Wvab5rszTepBG4QZUuosSjmXFYrcoDAzCJq7NpA/1SY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/database/database-6/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Nohv (Alt + H)">Nohv</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/database/" title="Database">
+                    <span>Database</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/network/" title="Network">
+                    <span>Network</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/os/" title="OS">
+                    <span>OS</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Database 6
+    </h1>
+    <div class="post-meta"><span title='2024-09-08 22:54:19 +0900 KST'>September 8, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h3 id="데이터베이스-시스템-구현">데이터베이스 시스템 구현<a hidden class="anchor" aria-hidden="true" href="#데이터베이스-시스템-구현">#</a></h3>
+<p>세부 구현을 시작한다.</p>
+<p>먼저, 마운트된 공간에 데이터를 적재하고, 해당 데이터를 조회하는 기본적인 기능을 수행하도록 Table 구조체를 작성한다.</p>
+<p>예시 코드를 작성할 때에는 마운트 포인트를 <code>pwd + /data</code> 로 임의 설정했다.
+내부에 테이블 종류에 따라 폴더를 추가 구성하고, 해당 폴더 내부에 <code>.schema</code> 파일을 생성하여 schema 구조를 정의하고, <code>.csv</code> 확장자로 데이터를 적재했다.
+데이터 저장 형태는 여러 형태가 권장되고 있었는데, 별도의 예시를 찾기 어려워 테이블 구조를 저장하고 관리하기 좋은 csv 형태를 선택했다.</p>
+<p>아래는 구현된 Table 구조체 코드이다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#75715e">// table.rs
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">use</span> std::collections::BTreeMap;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::fs::{self, File};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::io::{BufRead, BufReader, BufWriter, Write};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::path::{Path, PathBuf};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::error::Error;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> serde::{Deserialize, Serialize};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#[derive(Debug, Clone, Serialize, Deserialize)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TableSchema</span> {
+</span></span><span style="display:flex;"><span>	columns: Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Table</span> {
+</span></span><span style="display:flex;"><span>	rows: Vec<span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>	index: <span style="color:#a6e22e">BTreeMap</span><span style="color:#f92672">&lt;</span>String, <span style="color:#66d9ef">usize</span><span style="color:#f92672">&gt;</span>,
+</span></span><span style="display:flex;"><span>	schema: <span style="color:#a6e22e">TableSchema</span>,
+</span></span><span style="display:flex;"><span>	path: <span style="color:#a6e22e">PathBuf</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">impl</span> Table {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">new</span>(table_name: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>, schema: Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>) -&gt; Result<span style="color:#f92672">&lt;</span>Table, Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> table_dir <span style="color:#f92672">=</span> format!(<span style="color:#e6db74">&#34;./data/</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, table_name);
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> schema_file <span style="color:#f92672">=</span> format!(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">.schema&#34;</span>, table_dir, table_name);
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> csv_file <span style="color:#f92672">=</span> format!(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">.csv&#34;</span>, table_dir, table_name);
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> path <span style="color:#f92672">=</span> PathBuf::from(table_dir);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#f92672">!</span>Path::new(<span style="color:#f92672">&amp;</span>path).exists() {
+</span></span><span style="display:flex;"><span>			fs::create_dir_all(<span style="color:#f92672">&amp;</span>path)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> schema <span style="color:#f92672">=</span> <span style="color:#66d9ef">if</span> Path::new(<span style="color:#f92672">&amp;</span>schema_file).exists() {
+</span></span><span style="display:flex;"><span>			Table::load_schema(<span style="color:#f92672">&amp;</span>schema_file)<span style="color:#f92672">?</span>
+</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>			TableSchema { columns: <span style="color:#a6e22e">schema</span> }
+</span></span><span style="display:flex;"><span>		};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> rows <span style="color:#f92672">=</span> <span style="color:#66d9ef">if</span> Path::new(<span style="color:#f92672">&amp;</span>csv_file).exists() {
+</span></span><span style="display:flex;"><span>			Table::load_csv(<span style="color:#f92672">&amp;</span>csv_file)<span style="color:#f92672">?</span>
+</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>			Vec::new()
+</span></span><span style="display:flex;"><span>		};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		Ok(Table {
+</span></span><span style="display:flex;"><span>			rows,
+</span></span><span style="display:flex;"><span>			index: <span style="color:#a6e22e">BTreeMap</span>::new(),
+</span></span><span style="display:flex;"><span>			schema,
+</span></span><span style="display:flex;"><span>			path: <span style="color:#a6e22e">PathBuf</span>::from(path),
+</span></span><span style="display:flex;"><span>		})
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">load_schema</span>(schema_path: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>) -&gt; Result<span style="color:#f92672">&lt;</span>TableSchema, Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> file <span style="color:#f92672">=</span> File::open(schema_path)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> reader <span style="color:#f92672">=</span> BufReader::new(file);
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> schema: <span style="color:#a6e22e">TableSchema</span> <span style="color:#f92672">=</span> serde_json::from_reader(reader)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		Ok(schema)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">load_csv</span>(csv_path: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>) -&gt; Result <span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;&gt;</span>, Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> file <span style="color:#f92672">=</span> File::open(csv_path)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> reader <span style="color:#f92672">=</span> BufReader::new(file);
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> rows <span style="color:#f92672">=</span> Vec::new();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">for</span> line <span style="color:#66d9ef">in</span> reader.lines() {
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">let</span> line <span style="color:#f92672">=</span> line<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">let</span> row: Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> line.split(<span style="color:#e6db74">&#39;,&#39;</span>).map(<span style="color:#f92672">|</span>s<span style="color:#f92672">|</span> s.to_string()).collect();
+</span></span><span style="display:flex;"><span>			rows.push(row);
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		Ok(rows)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">save_schema</span>(<span style="color:#f92672">&amp;</span>self) -&gt; Result<span style="color:#f92672">&lt;</span>(), Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> schema_file <span style="color:#f92672">=</span> format!(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">.schema&#34;</span>, self.path.display(), <span style="color:#e6db74">&#34;table&#34;</span>);
+</span></span><span style="display:flex;"><span>		println!(<span style="color:#e6db74">&#34;Saving Schema to: </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, schema_file);
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> file <span style="color:#f92672">=</span> File::create(schema_file)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> writer <span style="color:#f92672">=</span> BufWriter::new(file);
+</span></span><span style="display:flex;"><span>		serde_json::to_writer(writer, <span style="color:#f92672">&amp;</span>self.schema)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		Ok(())
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">save_csv</span>(<span style="color:#f92672">&amp;</span>self) -&gt; Result<span style="color:#f92672">&lt;</span>(), Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> csv_file <span style="color:#f92672">=</span> format!(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">.csv&#34;</span>, self.path.display(), <span style="color:#e6db74">&#34;table&#34;</span>);
+</span></span><span style="display:flex;"><span>		println!(<span style="color:#e6db74">&#34;Saving CSV to: </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, csv_file);
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> file <span style="color:#f92672">=</span> File::create(csv_file)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> writer <span style="color:#f92672">=</span> BufWriter::new(file);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">for</span> row <span style="color:#66d9ef">in</span> <span style="color:#f92672">&amp;</span>self.rows {
+</span></span><span style="display:flex;"><span>			writeln!(writer, <span style="color:#e6db74">&#34;{}&#34;</span>, row.join(<span style="color:#e6db74">&#34;,&#34;</span>))<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		writer.flush()<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>		Ok(())
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">insert</span>(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> self, row: Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span>) -&gt; Result<span style="color:#f92672">&lt;</span>(), Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">let</span> key <span style="color:#f92672">=</span> row[<span style="color:#ae81ff">0</span>].clone(); <span style="color:#75715e">// use first row as a key
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		self.index.insert(key.clone(), self.rows.len());
+</span></span><span style="display:flex;"><span>		self.rows.push(row);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		self.save_csv();
+</span></span><span style="display:flex;"><span>		Ok(())
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">select</span>(<span style="color:#f92672">&amp;</span>self, key: <span style="color:#66d9ef">&amp;</span>String) -&gt; Option<span style="color:#f92672">&lt;&amp;</span>Vec<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>		self.index.get(key).map(<span style="color:#f92672">|&amp;</span>i<span style="color:#f92672">|</span> <span style="color:#f92672">&amp;</span>self.rows[i])
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>큰 설명이 필요한 코드가 존재하지는 않고, 단순히 파일 경로와 파일 이름을 확인하여 I/O 를 수행하는 테이블이다.</p>
+<h3 id="transparent-database-encryption">Transparent Database Encryption<a hidden class="anchor" aria-hidden="true" href="#transparent-database-encryption">#</a></h3>
+<p>.csv 파일 단위로 암호화를 실행한다. 이후 해당 파일을 읽어들일 때 복호화를 진행한다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#75715e">// encryption.rs
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">use</span> aes::cipher::{BlockDecrypt, KeyInit};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> aes::Aes256;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> aes::cipher::{BlockEncrypt, generic_array::GenericArray};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> rand::Rng;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> base64::{engine, Engine};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::error::Error;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::fs::{File};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::io::{Read, Write};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">KEY_SIZE</span>: <span style="color:#66d9ef">usize</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">32</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">generate_key</span>() -&gt; [<span style="color:#66d9ef">u8</span>; <span style="color:#66d9ef">KEY_SIZE</span>] {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> key <span style="color:#f92672">=</span> [<span style="color:#ae81ff">0</span><span style="color:#66d9ef">u8</span>; <span style="color:#66d9ef">KEY_SIZE</span>];
+</span></span><span style="display:flex;"><span>    rand::thread_rng().fill(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> key[<span style="color:#f92672">..</span>]);
+</span></span><span style="display:flex;"><span>    key
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">encrypt_data</span>(key: <span style="color:#66d9ef">&amp;</span>[<span style="color:#66d9ef">u8</span>], data: <span style="color:#66d9ef">&amp;</span>[<span style="color:#66d9ef">u8</span>]) -&gt; Result<span style="color:#f92672">&lt;</span>String, Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cipher <span style="color:#f92672">=</span> Aes256::new(<span style="color:#f92672">&amp;</span>GenericArray::from_slice(key));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> buffer <span style="color:#f92672">=</span> data.to_vec();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> padding <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span> <span style="color:#f92672">-</span> (buffer.len() <span style="color:#f92672">%</span> <span style="color:#ae81ff">16</span>);
+</span></span><span style="display:flex;"><span>    buffer.extend(vec![padding <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">u8</span>; padding]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> chunk <span style="color:#66d9ef">in</span> buffer.chunks_mut(<span style="color:#ae81ff">16</span>) {
+</span></span><span style="display:flex;"><span>        cipher.encrypt_block(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> GenericArray::from_mut_slice(chunk));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    Ok(engine::general_purpose::<span style="color:#66d9ef">STANDARD</span>.encode(<span style="color:#f92672">&amp;</span>buffer))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">decrypt_data</span>(key: <span style="color:#66d9ef">&amp;</span>[<span style="color:#66d9ef">u8</span>], encode_data: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>) -&gt; Result<span style="color:#f92672">&lt;</span>Vec<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">u8</span><span style="color:#f92672">&gt;</span>, Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cipher <span style="color:#f92672">=</span> Aes256::new(<span style="color:#f92672">&amp;</span>GenericArray::from_slice(key));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> data <span style="color:#f92672">=</span> engine::general_purpose::<span style="color:#66d9ef">STANDARD</span>.decode(encode_data)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> buffer <span style="color:#f92672">=</span> data;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> chunk <span style="color:#66d9ef">in</span> buffer.chunks_mut(<span style="color:#ae81ff">16</span>) {
+</span></span><span style="display:flex;"><span>        cipher.decrypt_block(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> GenericArray::from_mut_slice(chunk));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> padding <span style="color:#f92672">=</span> buffer.last().unwrap_or(<span style="color:#f92672">&amp;</span><span style="color:#ae81ff">0</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xFF</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> end <span style="color:#f92672">=</span> buffer.len() <span style="color:#f92672">-</span> padding <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">usize</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Ok(buffer[<span style="color:#f92672">..</span>end].to_vec())
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">encrypt_file</span>(file_path: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>, key: <span style="color:#66d9ef">&amp;</span>[<span style="color:#66d9ef">u8</span>]) -&gt; Result<span style="color:#f92672">&lt;</span>(), Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> file <span style="color:#f92672">=</span> File::open(file_path)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> data <span style="color:#f92672">=</span> Vec::new();
+</span></span><span style="display:flex;"><span>    file.read_to_end(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> data)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> encrypted_data <span style="color:#f92672">=</span> encrypt_data(key, <span style="color:#f92672">&amp;</span>data)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> file <span style="color:#f92672">=</span> File::create(file_path)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    file.write_all(encrypted_data.as_bytes())<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    Ok(())
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">decrypt_file</span>(file_path: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>, key: <span style="color:#66d9ef">&amp;</span>[<span style="color:#66d9ef">u8</span>]) -&gt; Result<span style="color:#f92672">&lt;</span>(), Box<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">dyn</span> Error<span style="color:#f92672">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> file <span style="color:#f92672">=</span> File::open(file_path)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> encoded_data <span style="color:#f92672">=</span> String::new();
+</span></span><span style="display:flex;"><span>    file.read_to_string(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> encoded_data)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> decrypted_data <span style="color:#f92672">=</span> decrypt_data(key, <span style="color:#f92672">&amp;</span>encoded_data)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> file <span style="color:#f92672">=</span> File::create(file_path)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    file.write_all(<span style="color:#f92672">&amp;</span>decrypted_data)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>    Ok(())
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>위의 구현된 내용처럼 AES 기반 암호화를 진행한다.</p>
+<p>실제 기본 파일은 다음과 같은 형태인데,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csv" data-lang="csv"><span style="display:flex;"><span><span style="color:#e6db74">1</span>,<span style="color:#e6db74">Alice</span>,<span style="color:#e6db74">25</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">2</span>,<span style="color:#e6db74">Bob</span>,<span style="color:#e6db74">30</span>
+</span></span></code></pre></div><p>다음과 같이 암호화된 형태로 적재된다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csv" data-lang="csv"><span style="display:flex;"><span><span style="color:#e6db74">VBodlpqBIeCPbBgBbTVGBckgTmw+Vbq6amR7l8heUS4=</span>
+</span></span></code></pre></div><p>이후 다시 조회하는 경우 decryption을 진행하여 데이터를 불러온다.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">Nohv</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
