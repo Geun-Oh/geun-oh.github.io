@@ -1,4 +1,4 @@
-baseURL = 'https://geun-oh.github.io/'
+baseURL = 'https://geun-oh.github.io'
 languageCode = 'en-us'
 title = 'Nohv'
 theme = 'PaperMod'
@@ -12,11 +12,13 @@ enableRobotsTXT = true
 [params]
   [params.homeInfoParams]
     Title = "Welcome"
-    Content = """Software Engineer
-    Love tools that streamline processes(like neovim & nix..)
-    Delving deeper into Operating System, Network and Database
-    Does not locked in specific programming language, use proper language in each context
-    Friendly using Go, Typescript and Zig"""
+    Content = """
+    Software Engineer <br />
+    Love tools that streamline processes(like neovim & nix..) <br />
+    Delving deeper into Operating System, Network and Database <br />
+    Does not locked in specific programming language, use proper language in each context <br />
+    Friendly using Go, Typescript and Zig <br />
+    """
 
   [[params.socialIcons]]
     name = "github"
