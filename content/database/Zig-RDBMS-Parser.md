@@ -6,6 +6,7 @@ draft = false
 
 > Zig의 allocator와 comptime에 대한 이해를 더하기 위해, facebook의 RocksDB를 기반으로 하는 RDBMS를 구성한다.
 > Lexer 에서 전달한 Token 배열을 기반으로 각 인자들을 추출하는 Parser를 제작한다.
+>
 > 모든 코드는 https://notes.eatonphil.com/zigrocks-sql.html 레포지토리를 기반으로 하며,
 > 추가적인 기능을 구현하는 내용을 포함한다.
 
