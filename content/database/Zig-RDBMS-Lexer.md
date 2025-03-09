@@ -1,5 +1,5 @@
 +++
-title = 'Zig RDBMS Lexer'
+title = '[RDBMS with zig] - Lexer'
 date = 2025-03-08T21:28:01+09:00
 draft = false
 +++
