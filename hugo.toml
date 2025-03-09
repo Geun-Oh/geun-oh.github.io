@@ -10,8 +10,14 @@ enableRobotsTXT = true
   priority = 0.5
 
 [params]
+  mainSections = ["posts", "database", "network", "os"]
+  
+  [params.home]
+  orderBy = "publishDate"
+  orderDirection = "desc"
+
   [params.homeInfoParams]
-    Title = "Welcome"
+    Title = "Hyeonggeun Oh"
     Content = """
     Software Engineer
     
@@ -31,6 +37,9 @@ enableRobotsTXT = true
   [[params.socialIcons]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/hyeonggeun-oh-760a5b240/"
+  [[params.socialIcons]]
+    name = "medium"
+    url = "https://medium.com/@a01091634257"
   [[params.socialIcons]]
     name = "cv"
     url = "https://drive.google.com/file/d/1feRPHsii2lctkqZEvZ5VCEkZ7z3ejU3-/view?usp=sharing"
