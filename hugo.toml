@@ -17,6 +17,9 @@ enableRobotsTXT = true
   mainSections = ["posts", "database", "network", "os"]
   defaultTheme = "light"
   
+  [params.comments]
+  enable = true
+
   [params.home]
   orderBy = "publishDate"
   orderDirection = "desc"
@@ -35,6 +38,20 @@ enableRobotsTXT = true
     At home, post general purpose programming stuffs like Distributed System,
     System Programming,,, or everything I'm interested in.
     """
+
+  [params.giscus]
+  repo = "Geun-Oh/geun-oh.github.io"
+  repoID = "R_kgDOMiZJ6g"
+  category = "General"
+  categoryID = "DIC_kwDOMiZJ6s4CnzGI"
+  mapping = "og:title"
+  dataStrict = "1"
+  reactionsEnabled = "1"
+  emitMetadata = "0"
+  inputPosition = "bottom"
+  theme = "preferred_color_scheme"
+  lang = "en"
+  loading = "lazy"
 
   [[params.socialIcons]]
     name = "github"
