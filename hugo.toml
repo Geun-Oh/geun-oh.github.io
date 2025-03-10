@@ -16,6 +16,7 @@ enableRobotsTXT = true
 [params]
   mainSections = ["posts", "database", "network", "os"]
   defaultTheme = "light"
+  disableThemeToggle = true
   
   [params.comments]
   enable = true
@@ -49,7 +50,7 @@ enableRobotsTXT = true
   reactionsEnabled = "1"
   emitMetadata = "0"
   inputPosition = "bottom"
-  theme = "preferred_color_scheme"
+  theme = "light"
   lang = "en"
   loading = "lazy"
 
