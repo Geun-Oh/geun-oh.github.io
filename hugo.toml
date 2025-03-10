@@ -4,9 +4,9 @@ title = 'Nohv'
 theme = 'PaperMod'
 enableRobotsTXT = true
 
-services:
-  googleAnalytics:
-    id: G-MDH2SL5MH9
+[services]
+  [services.googleAnalytics]
+    id = "G-MDH2SL5MH9"
 
 [sitemap]
   changefreq = "daily"
