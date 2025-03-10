@@ -11,6 +11,7 @@ enableRobotsTXT = true
 
 [params]
   mainSections = ["posts", "database", "network", "os"]
+  defaultTheme = "light"
   
   [params.home]
   orderBy = "publishDate"
