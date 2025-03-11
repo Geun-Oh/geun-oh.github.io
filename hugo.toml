@@ -65,7 +65,7 @@ enableRobotsTXT = true
     url = "https://medium.com/@a01091634257"
   [[params.socialIcons]]
     name = "cv"
-    url = "https://drive.google.com/file/d/1feRPHsii2lctkqZEvZ5VCEkZ7z3ejU3-/view?usp=sharing"
+    url = "https://drive.google.com/file/d/1qwHOTQBxNqdS-RQHdzXeJzqAHjvaU7XY/view?usp=drive_link"
 
   env = "production"
 
