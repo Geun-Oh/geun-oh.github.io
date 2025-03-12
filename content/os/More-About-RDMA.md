@@ -1,5 +1,5 @@
 +++
-title = '[System Programming] RDMA'
+title = '[System Programming] More about RDMA'
 date = 2025-03-11T18:35:41+09:00
 draft = false
 +++

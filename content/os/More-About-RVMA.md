@@ -1,15 +1,15 @@
 +++
-title = '[System Programming with Paper Review] RVMA: Remote Virtual Memory Access for High-Performance Networks'
+title = '[System Programming] More about RVMA'
 date = 2025-03-12T19:26:28+09:00
 draft = false
 +++
 
 > [Google Scholar](https://ieeexplore.ieee.org/abstract/document/9460494?casa_token=a_ziniKAeSIAAAAA:l_6XJraLUD_6TeVKaO9q033hZAg8xfOr6DPLeE79GoXYAVDUkfdlJzcK8onDKvu4xEfnXGo)
 >
-> 기존의 RDMA에 대한 제한사항을 극복하고, 분산 네트워크 환경에서 유연하게 동작하기 위한 세로운 데이터 접근 방식이다.
+> 기존의 RDMA에 대한 제한사항을 극복하고, 분산 네트워크 환경에서 유연하게 동작하기 위한 세로운 데이터 접근 방식이다.****
 > 관련한 핵심 아이디어를 요약하고 정리한다.
 
-## 기존 RDA의 한계
+## 기존 RDMA의 한계
 
 기존 RDMA는 여러 노드 간의 메모리 액세스를 가능하게 하고, 이를 기반으로 실제 분산 네트워크에서 데이터 노드 <=> 워커 노드를 구분하도록 하는 등 대규모 컴퓨팅 아키텍쳐에서 장점을 극대화하도록 하는 기술이었다.
 그러나 RDMA에도 문제가 있는데, 다음과 같다.
