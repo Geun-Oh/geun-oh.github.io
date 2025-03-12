@@ -6,7 +6,7 @@ draft = false
 
 > [Google Scholar](https://ieeexplore.ieee.org/abstract/document/9460494?casa_token=a_ziniKAeSIAAAAA:l_6XJraLUD_6TeVKaO9q033hZAg8xfOr6DPLeE79GoXYAVDUkfdlJzcK8onDKvu4xEfnXGo)
 >
-> 기존의 RDMA에 대한 제한사항을 극복하고, 분산 네트워크 환경에서 유연하게 동작하기 위한 세로운 데이터 접근 방식이다.****
+> 기존의 RDMA에 대한 제한사항을 극복하고, 분산 네트워크 환경에서 유연하게 동작하기 위한 세로운 데이터 접근 방식이다.
 > 관련한 핵심 아이디어를 요약하고 정리한다.
 
 ## 기존 RDMA의 한계
