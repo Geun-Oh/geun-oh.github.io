@@ -72,3 +72,11 @@ RNIC를 이용해서 2계층부터 트래픽을 우회한다. 이는 커널을 �
 2. NIC처리: Source host의 NIC는 요청을 처리하여 네트워크를 통해 Destination NIC로 전송한다. 여기서 각 NIC는 RDMA를 위한 RNIC가 설치되어 있어야한다. 이는 트래픽을 미리 우회하여 커널 스택을 지나지 않도록 보장한다.
 3. 키 검증: Destination NIC는 R_KEY를 검증하여 메모리 접근 권한을 확인한다. 만일 유효하지 않은 key라면 에러를 발생시킨다.
 4. 검증이 성공하면 Destination NIC는 요청된 메모리 영역에 직접 접근하여 데이터 IO를 수행한다.
+
+---
+
+~Ref~
+
+https://www.fibermall.com/ko/blog/what-is-rdma.htm
+https://cuterwrite.top/en/p/rdma-mr/
+https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/7/html/networking_guide/part-infiniband_and_rdma_networking
