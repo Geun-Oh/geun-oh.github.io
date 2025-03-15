@@ -6,73 +6,72 @@ draft = false
 
 > [Google Scholar](https://ieeexplore.ieee.org/abstract/document/9460494?casa_token=a_ziniKAeSIAAAAA:l_6XJraLUD_6TeVKaO9q033hZAg8xfOr6DPLeE79GoXYAVDUkfdlJzcK8onDKvu4xEfnXGo)
 >
-> 기존의 RDMA에 대한 제한사항을 극복하고, 분산 네트워크 환경에서 유연하게 동작하기 위한 세로운 데이터 접근 방식이다.
-> 관련한 핵심 아이디어를 요약하고 정리한다.
+> RVMA is a new approach for data access which is useful in distributed systems. It overcomes remain restrictions in RDMA and behaves properly in distributed & large scale systems.
+> This article summarize and organize key concepts of it.
 
-## 기존 RDMA의 한계
+## Remain Restrictions of RDMA
 
-기존 RDMA는 여러 노드 간의 메모리 액세스를 가능하게 하고, 이를 기반으로 실제 분산 네트워크에서 데이터 노드 <=> 워커 노드를 구분하도록 하는 등 대규모 컴퓨팅 아키텍쳐에서 장점을 극대화하도록 하는 기술이었다.
-그러나 RDMA에도 문제가 있는데, 다음과 같다.
+RDMA is a technology that enables memory access between multiple nodes, and maximizes its benefits when used in large scale computing architectures that distinguish between data nodes and worker nodes in distributed networks.
+However, there are issues with RDMA as well, including the following.
 
-### 불완전 순서 보장
+### Incomplete ordering guarantees
 
-RDMA 작업은 작업 유형에 따라 순서 규칙이 다르게 주어진다. 쓰기 작업의 경우 서로 간의 순서가 보장되나, 쓰기작업 외의 작업들은 이러한 보장을 받지 못한다.
-InfiniBand의 트랜잭션 순서 규칙에 따라, 다른 유형의 작업 간에는 순서를 보장받지 못해 먼저 입력된 read 보다 write가 먼저 수행되는 등 여러 문제를 초래할 수 있다. 이는 궁극적으로는 의도하지 않은 동작을 얘기할 수 있다.
+RDMA operations are given ordering rules based on their operation types. Although write operation ordering is fully guaranteed, others are not.
+Based on transaction ordering rules of InfiniBand, many unexpected situations can occur (such as reads being executed before previously entered writes) because it does not guarantee complete ordering.
 
-물론 이러한 순서 제어를 위해서 별도 프로그래밍을 하는 방법이 사용되고 있음에도, 근본적인 문제로 남아있는 것은 사실이다.
+Of course there are various programs that controls ordering of operations in RDMA, but it still remains as fundamental problems.
 
-### 보안
+### Security
 
-RDMA는 연결 시에 메모리 버퍼에 대한 low-level 세부 정보를 노출하게 되기 때문에, 로컬 네트워크를 벗어난 곳에서는 사용이 꺼려질 수 있다.
-
+RDMA exposes detailed information of low-level memory buffers when connected, which can be a security concern outside of local networks.
 
 ## RVMA
 
-RVMA는 RDMA를 기반으로 하여 개선된 통신 방식으로, 사용성, 자원 관리, 장애 감내(Fault tolerance)를 주요 목표로 잡는다.
-이를 위해서는 다음과 같은 핵심적인 개념들이 소개된다.
+RVMA is a improved connection method based on RDMA, which focuses on usability, resource management, and fault tolerance.
+And these core concepts are introduced.
 
 ### Receiver-Side Resource Management
 
-RVMA에서는 수신자 측에서 자원을 관리하여 송신자 측의 부담을 줄이고, RDMA의 독점적 / 조정된 자원의 요구 사항을 제거하게 된다.
-따라서, 송신자 측에서는 low-level 메모리 주소 등의 민감 정보를 굳이 알지 않아도 가상 주소(mailbox address)를 통해서 데이터를 전송할 수 있다.
+In RVMA, sender-side resource management capabilities are reduced by transferring them to the receiver-side.
+This allows data to be transferred through virtual addresses (mailbox addresses) without requiring the sender to know sensitive information such as low-level memory addresses.
 
 ### Lightweight Completion Notification Mechanism
 
-기존 RDMA를 사용하는 곳에서는 작업 완료를 확인하기 위해 완료 큐를 폴링하는 방법을 사용하고 있었다. 수신자 노드는 RDMA가 데이터 관련 작업을 완료했음을 폴링하며 계속 주시하고 있어야 했다.
-RVMA는 RDMA와 다르게 데이터 전송 완료 시 경량화된 알림을 제공하여 수신자 노드에게 작업에 대한 폴링 부담을 덜고, 더욱 높은 성능을 제공하도록 돕는다.
+Where traditional RDMA is used, it polls the completion queue to confirm task completion. RDMA must continuously monitor this queue to check whether the task is done.
+Unlike RDMA, RVMA reduces receiver's polling pressure by providing lightweight notifications that alert the receiver when tasks are completed, which helps maintain high performance.
 
-RVMA는 수신자 측에서 관리하는 리소스를 통해 가상 주소 추상화를 제공하고, 완료 포인터를 사용해 작업 완료를 알리게 된다. RNIC는 메모리 버퍼가 가득 차게되면 완료 포인터에 버퍼의 헤드를 기록하고,
-수신자 노드는 이 메모리 위치를 모니터링하여 완료를 감지할 수 있다.
+RVMA also provides abstraction of virtual addresses with resource which sender manages and notifies task completion with completion pointer. RNIC records memory buffer's head when the buffer is full, and the receiver can detect the completion by monitoring the memory buffer.
 
-> 그러면 어쨌든 무언가 폴링해야하는 건 맞지 않나?
-> : 그건 맞지만, 별도의 효율적인 메커니즘(Monitor/MWait)을 사용하여 이에 대한 오버헤드를 줄이고 빠른 응답 시간을 얻을 수 있음을 보여준다.
+> BTW, it is inevitable to poll something?
+> : That's right. But RVMA reduces overhead and provides fast response times by using more effeicient machanism (Monitor/MWait).
 
 ### Adaptive Routing Network Support
 
-RVMA는 바이트 수준의 순서 보장을 통해서가 아닌 별도의 기술들을 활용해 적응형 라우팅 네트워크에서도 순서를 보장한다. 이는 패킷들이 역순으로 도착하더라도 데이터 손상 없이 올바른 물리적 위치에 기록될 수 있음을 말한다.
-이는 위에서 설명한 개념들에 더불어, 가상주소 및 오프셋 활용 등을 통해 구현된 바 있다.
+RVMA also guarantees ordering in adaptive routing network by utilizing some techniques. Which means that the packets can be reordered in right way even if it arrives in reverse order without any data corruption.
+There's a examples of techniques like virtual addresses or offsets which are used for providing adaptive routing network.
 
 ### Virtual Address
 
-Mailbox를 기반으로 한다. 이 말은 결국 IPC 와 같이 간주된다는 것으로...? 해석되는 듯 하다.
+Based on Mailbox. So it means that it is considered like IPC after all...I think.
 
-RVMA NIC는 수신 호스트에서 사용하는 가상 주소를 대상의 실제 메모리 물리적 위치로 변환하는 변환 테이블을 유지한다. 이는 RVMA 메일박스 주소에 여러 버퍼를 연결할 수 있도록 한다.
+In RVMA, NIC keep transfer table which converts virtual addresses into real physical memory addresses that receiver hosts uses. It enables to connect RVMA mailbox address with multiple buffers.
 
-변환 과정은 다음과 같다.
+The process of conversion is the following.
 
-1. RVMA명령이 수신되면 주소 변환이 수행된다 (RNIC에서 수행). 가상 메일박스 주소를 실제 물리 메모리 주소로 매핑한다.
-2. 데이터가 메모리에 쓰일 준비를 한다.
-3. Completion Notification 을 위한 메모리 주소를 준비하고, 가상 주소와 연결된 카운터가 증가한다.
-4. 버퍼가 다 쓰이고 나면, Completion Notification 포인터 주소에 데이터 버퍼의 헤드가 기록된다.
+1. When RVMA operation is received, address conversion occures (in RNIC). It maps virtual address with physical address.
+2. Data is prepared to be written to memory.
+3. Preparing memory address for completion notification, and the counter which is connected with virtual address increase.
+4. After if buffer is fully used, the head of data buffer is written to pointer address for completion notification.
 
-이는 다음과 같은 장점을 가져온다.
+This has the following advantages.
 
-1. 원격 주소 교환 불필요: RDMA와 달리 원격 주소 탐지를 위한 핸드셰이킹이 필요하지 않다.
-2. 추상화: Low-level 정보를 추상화하여 은닉하고, 프로그래밍 인터페이스를 단순화한다.
-3. 수신자가 자신의 리소스를 독립적으로 관리하도록 해 효율적인 리소스 관리가 가능해진다.
-4. 앞서 언급한 적응형 라우팅 네트워크를 지원하도록 해 바이트 순서에 자유롭다.
+1. No remote address exchange required: Doesn't need hand-shaking for detection of remote address (which was done in RDMA).
+2. Abstraction: converts low-level information and simplifies programming interface.
+3. Enables efficient resource management by allowing receivers to manage their own resources independently.
+4. Free from byte ordering by supporting adaptive routing network.
 
 ---
 
-사실 생각만큼 와닿는 기술은 아니다. 논문을 제외하고는 주요하게 다루어진 문서를 찾기가 어려워서, 거의 논문에 의존했다. 더 내용이 많은데 내 역량 부족으로 추후 더 기술해야할 듯하다.
-단순화된 형태라도 추후 구현을 해보고 싶은데, 아마 각 컴포넌트 별(가상 주소 기법, 경량 완료 알림 기법)로 진행해보지 않을까 싶다.
+It's actually not as accessible as I might thought. Since it was hard to find proper documentation of it, i mostly relied on paper. There's a lot more to it, but I'll have to write more about it later.
+
+I'd like to implement this in the future, even in a simplified form perhaps on a per-component basis (virtual address, lightweight completion notification).
