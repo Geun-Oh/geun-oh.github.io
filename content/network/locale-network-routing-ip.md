@@ -1,50 +1,73 @@
 +++
-title = 'local-network-routing-ip'
+title = 'Local and Private Network IPs'
 date = 2024-11-23T22:37:12+09:00
 draft = false
 +++
 
-### 192.168.x.x 와 127.x.x.x 의 차이
+In general, developers often use non-public IP like 192.168.1.111, 127.0.0.1...etc.
+What's the difference between them? And why there are various ranges for Private usage IPs?
 
-둘 다 로컬 네트워크 라우팅을 위해 사용되지만,
-정확한 차이를 확인하자.
+## Loopback IP
 
-192.168.x.x는 Class 기반의 주소가 판치던 때에 태어났다.
-Class A 기반의 IP 주소 범위인 이 범위는 로컬 네트워크를 라우팅하는 용도로 사용되도록 특정되어있으며, 내 로컬 네트워크 (LAN) 상에 있는 다른 노드(디바이스)를 가리키도록 제한되어 있다.
-실제 퍼블릭한 인터넷을 직접적으로 가리키지 못하도록 되어 있다.
+At first, Let's talk about Loopback IP.
 
-반면에 127.x.x.x 는 Loopback Range로 더욱 자주 불리며,
-내 호스트 자체를 가리키는 용도로 많이 사용된다.
+Loopback IP, which helps individual host to interconnect between processes using port number, is defined in [RFC3330](https://datatracker.ietf.org/doc/html/rfc3330). Be specific, it includes range of 127.0.0.0/8 and we use 127.0.0.1 (as known as localhost) in common. That means we can use other CIDR blocks like 127.0.0.2 to use as loopback!
 
-네트워크 관련하여 테스트 등을 수행할 때 자주 사용되며,
-일반적으로는 127.0.0.1을 사용한다.
+RFC says that IPs in the range of loopback CIDR should not be revealed in public. And the IP datagrams from this address goes back to it's host and be multiplexed by the port number. So we can use it as method of IPC.
 
-### 127.x.x.x는 Loopback 할거면서 뭐이리 범위는 크게 잡았나?
+Also, IPv6's loopback IP is defined in [RFC4291](https://datatracker.ietf.org/doc/html/rfc4291). It is represented as ::1 or 0:0:0:0:0:0:0:1 (we can abbreviate continous 0 block with ::).
 
-실제로 127.0.0.1과 같은 Loopback주소는 하나의 IP만 있어도 큰 문제는 없다.
-그러면 굳이 왜 127.0.0.0/8(Class A) 의 범위를 할당했나?
+The loopback IP address is not connected or defined logically to be exhibited in public. When the kernel boots, internetworking stack defines it as loopback and use it locally in permanent.
 
-1. 역사적인 이유
+Let's take a loock at them one by one.
 
-IPv4 주소체계는 처음 설게될 때, IP주소 공간을 여러. 클래스로 나누었다.
-이때, 네트워크의 크기와 용도에 따라 A~C로 할당한다.
-당시에는 넓은 범위를 할당하는 것이 일반적이 케이스였다.
+### 10.0.0.0/8 (Class A)
 
-2. 확장성 및 유연성
+- The biggest range of private IP
+- Commonly used in NAT (to define multiple large networks)
+- Mainly adopted in company's network, data center, and cloud environments
 
-127.x.x.x 전체를 loopback으로 사용하면, 다양한 테스트나 내부 통신을 위해 여러 IP를 사용할 수 있다.
+### 172.16.0.0/12 (Class B)
 
-- 예를 들어, 하나의 시스템에서 여러 개의 네트워크 인터페이스나 서비스가 동작할 때, 각각의 구분을 위해 다른 loopback ip를 사용 가능하다.
-- 개발 환경에서는 서로 다른 IP를 사용해 다양한 네트워크 시나리오 테스트가 가능하다.
+- For middle size networks
+- Cloud service providers such as AWS uses it as default VPC address range
+- Because of it's ambiguous position, does not used as much as the ohter ranges
 
-3. 서브네팅 및 네트워크 분리
+### 192.168.0.0/16 (Class C)
 
-- 127.x.x.x범위를 서브넷으로 나누어 사용 가능하다. 예를 들어, 127.0.0.1은 기본적인 테스트에 사용하고, 127.0.10.x는 특정 서비스나 애플리케이션 테스트에 사용 가능하다.
-- 이는 더욱 다양하고 복잡한 테스트 시나리오 설정에 도움된다.
+- Commonly used in small size networks and household networks
+- Most of household routers use 192.168.0.0/24 or 192.168.1.0/24 as default
+- Fit for small offices or branch networks
 
-4. 호환성 및 표준화
+### Private Network IP
 
-- 초기 인터넷 설계에서는 미래의 확장성을 골해 넓은 주소 범위를 할당하는 것이 일반적이었다. 비록 현재는 대부분의 경우 127.0.0.1만 사용되지만,
-넓은 범위를 할당함으로써 미래에 발생할 수 있는 다양한 요구사항 충족이 가능하도록 한 것이다.
+There are various ranges of private network IPs such as 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16.
+Ranges and detail configurations are defined in [RFC1918](https://datatracker.ietf.org/doc/html/rfc1918).
 
-..지식이 늘었다!
+### Why such a large range for 127.x.x.x when we only need one IP for Loopback?
+
+In reality, having just one IP address like 127.0.0.1 for loopback would be sufficient.
+So why was such a large range of 127.0.0.0/8 (Class A) allocated?
+
+1. Historical Reasons
+
+When IPv4 addressing was first designed, IP address spaces were divided into several classes.
+At that time, addresses were allocated as Classes A through C based on network size and purpose.
+It was common practice then to allocate large address ranges.
+
+2. Scalability and Flexibility
+
+Using the entire 127.x.x.x range for loopback allows multiple IPs to be used for various testing and internal communications.
+
+- For example, when multiple network interfaces or services are running on a single system, different loopback IPs can be used to distinguish between them.
+- In development environments, different IPs can be used to test various network scenarios.
+
+3. Subnetting and Network Separation
+
+- The 127.x.x.x range can be divided into subnets for different uses. For example, 127.0.0.1 can be used for basic testing, while 127.0.10.x can be used for specific service or application testing.
+- This helps in setting up more diverse and complex testing scenarios.
+
+4. Compatibility and Standardization
+
+- In early Internet design, it was common to allocate wide address ranges to account for future expandability. Although most cases today only use 127.0.0.1,
+  the wide range allocation ensures that various future requirements can be met.
