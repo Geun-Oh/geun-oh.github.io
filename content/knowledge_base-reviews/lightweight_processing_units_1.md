@@ -1,5 +1,5 @@
 +++
-title = 'OS 1'
+title = '[Operating System] Lightweight Processing Units 1'
 date = 2024-09-11T11:03:09+09:00
 draft = false
 +++

@@ -8,6 +8,7 @@ draft = false
 
 ## Intro
 
+RDMA is technology to transfer data efficiently in network, enables data exchanged between multiple device mem eory buffer without OS or CPU's interruptions. It contributes significantly in
 RDMA는 네트워크 상에서 데이터를 효율적으로 전달하기 위한 기술로, 여러 기기 간 메모리 전송에서 OS나 CPU의 개입 없이 데이터를 교환하도록 한다. 이 기술은 고성능 컴퓨팅, 빅데이터 처리, 분산 시스템 등 여러 영역에서의 성능 향상에 크게 기여하고 있다.
 
 RDMA는 결국 다른 호스트 간의 통신을 지원하는 기술이기 때문에 DMA와 같이 운영체제 단에서 생각하는 것 외에도 기본적으로 네트워크 관점에서 살펴볼 수 있어야 할 듯하다. 일반적인 통신을 기반으로 하여 데이터를 전송할 때에는 각 호스트의 커널을 반드시 거치고, 다양한 형태의 가공 과정 및 트래픽 분산 과정들이 포함되기 마련이다. 반면에 RDMA의 핵심은 이러한 커널 개입을 최소화한다는 것에 있는데, RDMA를 사용하면 호스트 어댑터가 네트워크에서 들어오는 패킷을 인식하고, 이를 어디로 수신할지, 그리고 메모리 공간 내 어디에 위치시킬지를 결정할 수 있다. 이로 인해  **패킷은 커널을 거치지 않고 메모리에 직접 배치된다.**

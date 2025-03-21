@@ -1,5 +1,5 @@
 +++
-title = 'Nix 1'
+title = '[Nix] Nix 1'
 date = 2024-11-10T21:38:17+09:00
 draft = false
 +++

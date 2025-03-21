@@ -1,5 +1,5 @@
 +++
-title = 'Partitioning'
+title = '[Database] Partitioning'
 date = 2024-11-11T21:17:46+09:00
 draft = true
 +++

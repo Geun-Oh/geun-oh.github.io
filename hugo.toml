@@ -14,7 +14,7 @@ enableRobotsTXT = true
   priority = 0.5
 
 [params]
-  mainSections = ["posts", "database", "network", "os"]
+  mainSections = ["implementations-engineerings", "knowledge_base-reviews", "thoughts"]
   defaultTheme = "light"
   disableThemeToggle = true
   
@@ -70,18 +70,18 @@ enableRobotsTXT = true
   env = "production"
 
 [[menu.main]]
-  identifier = "database"
-  name = "Database"
-  url = "/database/"
+  identifier = "implementations-engineerings"
+  name = "Impl & Engineerings"
+  url = "/implementations-engineerings/"
   weight = 10
 [[menu.main]]
-  identifier = "network"
-  name = "Network"
-  url = "/network/"
+  identifier = "knowledge_base-reviews"
+  name = "KB & Reviews"
+  url = "/knowledge_base-reviews/"
   weight = 10
 [[menu.main]]
-  identifier = "os"
-  name = "OS"
-  url = "/os/"
+  identifier = "thoughts"
+  name = "Thoughts"
+  url = "/thoughts/"
   weight = 10
 

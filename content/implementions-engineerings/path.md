@@ -1,5 +1,5 @@
 +++
-title = 'Path & Exec'
+title = '[System Programming] Path & Exec'
 date = 2024-09-30T01:53:19+09:00
 draft = false
 +++

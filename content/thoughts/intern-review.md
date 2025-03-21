@@ -1,7 +1,7 @@
 +++
 title = 'Intern Review'
 date = 2024-10-27T01:33:17+09:00
-draft = true
+draft = false
 +++
 
 > 인턴 기간 진행했던 일들 + 배운 내용과 생각을 정리한다.

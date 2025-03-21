@@ -1,5 +1,5 @@
 +++
-title = 'Local and Private Network IPs'
+title = '[Networks] Local and Private Network IPs'
 date = 2024-11-23T22:37:12+09:00
 draft = false
 +++
