@@ -70,17 +70,17 @@ enableRobotsTXT = true
   env = "production"
 
 [[menu.main]]
-  identifier = "implementions-engineerings"
+  identifier = "Implementions & Engineerings"
   name = "Impl & Engineerings"
   url = "/implementions-engineerings/"
   weight = 10
 [[menu.main]]
-  identifier = "knowledge_base-reviews"
+  identifier = "Knowledge Bases & reviews"
   name = "KB & Reviews"
   url = "/knowledge_base-reviews/"
   weight = 10
 [[menu.main]]
-  identifier = "thoughts"
+  identifier = "Thoughts"
   name = "Thoughts"
   url = "/thoughts/"
   weight = 10
