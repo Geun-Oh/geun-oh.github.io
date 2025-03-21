@@ -70,9 +70,9 @@ enableRobotsTXT = true
   env = "production"
 
 [[menu.main]]
-  identifier = "implementations-engineerings"
+  identifier = "implementions-engineerings"
   name = "Impl & Engineerings"
-  url = "/implementations-engineerings/"
+  url = "/implementions-engineerings/"
   weight = 10
 [[menu.main]]
   identifier = "knowledge_base-reviews"
