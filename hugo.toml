@@ -62,7 +62,7 @@ enableRobotsTXT = true
     url = "https://www.linkedin.com/in/hyeonggeun-oh-760a5b240/"
   [[params.socialIcons]]
     name = "medium"
-    url = "https://medium.com/@a01091634257"
+    url = "https://medium.com/@geunoh"
   [[params.socialIcons]]
     name = "cv"
     url = "https://drive.google.com/file/d/1qwHOTQBxNqdS-RQHdzXeJzqAHjvaU7XY/view?usp=drive_link"
