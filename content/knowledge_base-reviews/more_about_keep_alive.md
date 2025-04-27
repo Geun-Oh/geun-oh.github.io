@@ -1,5 +1,5 @@
 +++
-title = '[Networks] More About Keep Alive'
+title = '[Computer Networks] More About Keep Alive'
 date = 2025-03-18T18:51:35+09:00
 draft = false
 +++
