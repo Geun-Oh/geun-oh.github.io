@@ -6,111 +6,109 @@ draft = false
 
 # Loadable Kernel Modules & Micro Kernel
 
-Loadable Kernel Modules (이하 LKM)은 기존의 모놀리식 커널의 유연성을 높이고, 다양한 형태의 커스텀이 가능하도록 오픈소스로서의 기능을 높인 하나의 큰 전환점이라고 할 수 있다.
+Loadable Kernel Modules (hereinafter referred to as LKM) stretches standard monolithic kernel's flexibility, and become a enormous turning point that expanded its facilities which are work as as an open source so developers can reform it without building the whole kernel agian. If a microkernel is like a brick house where developer can build different kernels from scratch, then building kernel with LKM is simply removing the built-in furniture, such as built-in cabinets, and filling it with their own furniture with ease.
 
-마이크로 커널이 다양한 커널을 처음부터 내 마음대로 쌓아 올리는 벽돌집과 같다면, LKM을 이용한 커널은 단순히 기존 붙박이장과 같은 내장 가구를 제거하고 나만의 가구들로 채우는 것이라고 이해하면 좋다.
+It can be enabled because they have different start lines.
+Microkernel aims to "kernel's minimization". It fully works as DIY to developer so they can add modules which they really need with only base module that essential features are supported. This architecture design provides not only highly engineer-depended personalization based on modulability and also additional stability and security, fault tolerance as pros.  
+But this inevitably derives user-space penetration of kernel features which built and loaded by engineer. So if they do not get ready for external threats and error situations enough, it can evoke massive faults. Also performance downgrade which caused by frequent switching between user-space and kernel-space is a big part of its cons.
 
-이는 실제 둘의 출발점이 다르기 때문인데,
-
-마이크로 커널은 애초에 '커널의 최소화' 를 위한 것이다. 가장 고유하고 필수적인 기능만 있는 기초적인 커널 위에 엔지니어가 직접 자신이 필요한 기능들을 고유하게 추가하여 만들 수 있는 DIY를 추가한 것이다. 이러한 점은 매우 높은 모듈성을 기반으로 하는 개인화와 더불어 추가적인 안정성과 보안, 장애 격리 등을 장점으로 가지고 있다고 할 수 있다.
-다만 이는 커널의 사용자 공간으로의 침투가 매우 큰 부분 일어나기 때문에, 안정성과 보안을 제대로 확보하지 못하면 큰 문제를 야기할 수 있다. 물론 커널 공간과 사용자 공간을 계속 왕복해야하는 것도 큰 성능 오버헤드를 야기하는 부분이 된다.
-
-반면 LKM의 경우, 모놀리식 커널에서의 동적 확장을 목적으로 한다. 기본적인 모놀리식 커널의 장점을 그대로 반영하되, 현대화된 기능들을 추가적으로 제공하거나 별도의 확장 가능한 시스템을 위한 가능성을 열어준 느낌이라고 생각하면 좋을 것 같다. 이는 기존의 매우 큰 생태계를 강하게 가지고 있는 리눅스 커널에서 지원됨으로써, 이 글에서 진행할 동적인 기능 추가에 '모듈 단위 빌드' 를 통해 전체 커널을 매번 빌드해야하는 소요를 없애 생산성을 크게 높였고 (실제로 커널 빌드 한 번 해보면 이게 얼마나 생산성 향상을 가져오는지 체감할 수 있다.), 커널 공간에서 실행하여 보안, 성능 등의 기본적인 사항들을 무리없이 제공받을 수 있다는 점에서 장점을 가진다.
+By the way, LKM aims to a dynamic expansion of kernel features in solid monolithic kernel architecture. It basically reflects traditional benefits of monolithic architecture, and additionally opens a 'loadable' modern features with format of module that can be expanded for the purpose of dynamic system. It strongly supported by linux kernel, which has a big power in kernel ecosystem (since it has numerous descendants which are rooted in linux and unix system), empowered kernel's productivity by removing redundant times that comes from building unchanged linux kernel modules because it forced to build the whole linux source code to change features which are not provided by LKM. You can also experience how much time takes to built the whole linux kernel.
+Unlike microkernel, dynamically loaded features are executed in kernel-space so we do not need to consider about switching overheads.
 
 # Debugging Kernel
 
-커널을 디버깅하는 것은 어려운 문제이다. 실제로 커널 공간의 작업들은 매우 격리된 환경에서 이루어지기 때문에, 시스템 프로그래밍을 직접 하는 것이 아니면 사실상 건드리지 않을 영역으로 여겨진다.
-그러나 최근 클라우드 네이티브의 가상화된 환경에서 커널 단의 작업들에 대한 엔지니어링이 대두되면서, eBPF 와 같은 도구들을 기반으로 하는 커널 관찰가능성이 큰 토픽으로 자리하고 있다.
+It is a hard part to debug kerenl. Since kernel space operations are executed in highly isolated environment, it does not allowed to touch its source code in manual if you are not a system engineer. However, with the recent rise in the engineering of kernel-level operations in cloud native, virtualized environments, kernel observability based on tools like eBPF has become a hot topic.
 
-그렇기에 앞으로 클라우드 네이티브 환경에서 살아가고자 한다면, 커널을 간단하게 커스텀하고 이에 대한 모니터링을 함으로써 관찰가능성을 향상시키는 방안들을 탐구하는 것이 필수적으로 다가오지 않을까 싶다.
-오늘은 그에 대한 일환으로, 커널 단의 코드에 디버깅 할 수 있도록 코드를 추가하고, 이를 기반으로 출력되는 데이터들을 확인해보자.
+Therefore, if you wanna live in a cloud native environment in the future, it'll be essential to explore ways to improve observability by simply customizing the kernel and monitoring it.
+Today, as part of it, Let's add some debuggable code to kernel level source code, and see what data it produces.
 
 ### printk vs \*trace
 
-두 방법은 Unix 계열의 커널에서 사용되는 가장 대표적인 로깅 도구이다. 이외에는 eBPF등의 고도화된 도구가 있거나, 두 도구와 함께 사용되는 syslog 등이 소개되고 있기에 우선 둘만 생각한다.
+These two methods are the most representative logging tools used in Unix like kernels. Other advances tools such as eBPF & syslog, which is used in conjunction with both tools, are introduced, so today I'll consider only these two methods.
 
 #### \*trace
 
-\*trace는 리눅스 커널에서의 대표적인 추적 도구인데, ptrace, ftrace 등 각자 추적하는 요소에 따라 이름이 다르다. 각자 추적하는 요소에 대한 정보들을 세세하게 추적하고, 관련 정보를 제공한다고 생각하면 된다. ptrace는 프로세스 관련, ftrace는 함수 관련이다.
-일반적으로 커널을 디버깅하는 경우에는 함수 단위의 실행 여부, 관련 이벤트나 레이턴시 등을 확인하는 경우가 많아 ftrace가 보편적으로 사용되는 듯하다.
+\*trace is the main tracing tool in the Linux kernel, with different names depending on what it traces, such as ptrace and ftrace. Each traces the details of the element it traces and provides
+relevant infromation. ptrace is for processes, and ftrace is for functions.
+In general, when debugging the kernel, ftrace seems to be the most commonly used tool because engineer often wanna check whether a function in the call stack is executing or not, related events or latency,,,et cetera.
 
-이외에도 ptrace같은 경우 유저 공간에서 시스템 콜 이력을 추적하는 도구인 strace의 기반이 되는 등 알게모르게 아주 유용하게 사용되고 있다.
+In addition, ptrace is unknowingly very useful as the basis for strace, a tool that traces the history of system calls in user space.
 
 #### printk
 
-printk 는 해당 글에서 주로 사용할 도구이며, dmesg라고 하는 별도 버퍼에 로깅을 진행하고, 추후 해당 dmesg를 조회해서 로그를 출력하는 형태를 띈다.
+printk is the tool that I'll use primarily in this post, and it takes the form of logging to a seperate buffer called dmesg, and later querying that dmesg to print the log.
 
-단순히 메세지를 출력하고, 관련 로그를 남긴다. 아래 소개할 \*trace처럼 다양한 기능을 추상화해서 제공하지는 않지만, 엔지니어가 직접 로그를 다양하게 커스텀하여 남길 수 있다.
+It simply prints a message and leaves the associated logs. It doesn't provide a lot of abstraction like \*trace below, but engineers can customize their own logs.
 
-일반적으로 로그에 버전을 두고 있어서, 관찰가능성을 로그 레벨을 기반으로 조절할 수 있다는 것이 장점으로 생각된다.
+The advantage is that the logs are usually versioned, so the observability can be adjusted based on the log level.
 
-실제로 다음과 같이 조회하면, 4 정도의 로그 레벨을 가지고 있을 것이다.
+In practice, if you query like this, you'll probably have a log level of 4.
 
 ```sh
 cat /proc/sys/kernel/printk
 4  4  1  7
-# 위 숫자는 순서대로 다음과 같다.
+# The numbers above represent the following in order:
 #
-# 1. 현재 설정된 로그 레벨
-# 2. printk()에서 로그 레벨을 명시하지 않은 경우 적용되는 로그 레벨
-# 3. 설정 가능한 최소한의 로그 레벨 (최고 위험도 수준)
+# 1. Currently set log level
+# 2. Log level applied when not specified in printk()
+# 3. Minimum configurable log level (highest risk level)
 # 4. Default
 ```
 
-printk에 대한 각 로그 레벨에 대한 구체적인 내용은 다음과 같다.
+The specifics for each log level of printk are as follows.
 
-| Name         | Log Level | Alias         | Description                             |
-| ------------ | --------- | ------------- | --------------------------------------- |
-| KERN_EMERG   | "0"       | `pr_emerg()`  | 긴급한 수준의 메세지를 출력             |
-| KERN_ALERT   | "1"       | `pr_alert()`  | 경고 수준의 메세지를 출력               |
-| KERN_CRIT    | "2"       | `pr_crit()`   | 치명적 수준의 메세지를 출력             |
-| KERN_ERR     | "3"       | `pr_err()`    | 에러 수준의 메세지를 출력               |
-| KERN_WARNING | "4"       | `pr_warn()`   | 경고 수준의 메세지를 출력               |
-| KERN_NOTICE  | "5"       | `pr_notice()` | 주의 수준의 메세지를 출력               |
-| KERN_INFO    | "6"       | `pr_info()`   | 설명 수준의 메세지를 출력               |
-| KERN_DEBUG   | "7"       | `pr_debug`    | 디버그 수준의 메세지를 출력             |
-| KERN_DEFAULT | ""        | `-`           | 기본적인 커널 로그 레벨의 메세지를 출력 |
-| KERN_CONT    | "c"       | `pr_cont()`   | 이전 로그 메세지와 같은 라인에서 출력   |
+| Name         | Log Level | Alias         | Description                                  |
+| ------------ | --------- | ------------- | -------------------------------------------- |
+| KERN_EMERG   | "0"       | `pr_emerg()`  | Outputs emergency level messages             |
+| KERN_ALERT   | "1"       | `pr_alert()`  | Outputs alert level messages                 |
+| KERN_CRIT    | "2"       | `pr_crit()`   | Outputs critical level messages              |
+| KERN_ERR     | "3"       | `pr_err()`    | Outputs error level messages                 |
+| KERN_WARNING | "4"       | `pr_warn()`   | Outputs warning level messages               |
+| KERN_NOTICE  | "5"       | `pr_notice()` | Outputs notice level messages                |
+| KERN_INFO    | "6"       | `pr_info()`   | Outputs informational level messages         |
+| KERN_DEBUG   | "7"       | `pr_debug`    | Outputs debug level messages                 |
+| KERN_DEFAULT | ""        | `-`           | Outputs messages at default kernel log level |
+| KERN_CONT    | "c"       | `pr_cont()`   | Outputs on the same line as previous message |
 
-우리는 오늘 KERN_DEBUG 를 사용해서 레벨 7 수준의 로그를 출력할 예정이기 때문에, 다음과 같이 로그 레벨을 조정해주자.
+Since I'm gonna use KERN_DEBUG to output level 7 logs today, let's adjust it as follows.
 
 ```sh
 echo 8 > /proc/sys/kernel/printk
 ```
 
-8보다 숫자가 작은 (위험도가 높은) 수준의 로그를 모두 버퍼에 저장하게 된다.
+This will store all logs with levels less than 8 (higher risk levels) in the buffer.
 
 ### BTRFS (B-tree file system)
 
-ext4와 가장 많이 비교되고, 대중적인 파일시스템이다. ext4는 리눅스의 기본이자 리눅스와 함께 진화한 대표적인 파일 시스템인데, 둘 다 매우 대중적이다.
+It is often compared with ext4 and is a popular filesystem. ext4 is the default filesystem of Linux and has evolved alongside Linux as a representative filesystem, and both are very popular.
 
-여기서는 파일 시스템 비교는 간단히 넘어가고자 한다.
+Here, I'll briefly skip over the filesystem comparison.
 
-btrfs의 경우 CoW (Copy on Write)을 제공하고, 이를 기반으로 하는 높은 데이터 손상 방지를 제공한다.
-이외에도 SSD에 최적화된..등의 여러 장점들이 있기에 실제로 NAS와 같은 데이터를 보관하는 형태의 워크스테이션들에서 매우 자주 사용된다고 알려져 있다.
+BTRFS provides CoW (Copy on Write) and offers high data corruption prevention based on this feature.
+Additionally, it has several advantages such as being optimized for SSDs, making it commonly used in workstations that store data like NAS systems.
 
-리눅스 커널 (본 필자는 6.13.5를 사용할 예정이다)에서는 btrfs가 처음부터 LKM으로 설치되어 있기 때문에, 이 코드를 직접 수정하고 바로 교체해보려고 한다.
+In the Linux kernel (I'll be using version 6.13.5), BTRFS is installed as an LKM from the start, so I'll try to modify this code directly and replace it.
 
-특정 시스템이 해당 커널에 모듈로 설치되어있는지 확인하고 싶다면, menuconfig 명령어로 커널의 설정에 진입하여 모듈들의 tristate를 확인하자.
+If you want to check whether a specific system is installed as a module in that kernel, use the menuconfig command to enter the kernel configuration and check the tristate of the modules.
 
-- built-in(y): 커널에 포함되어 처음부터 함께한다. LKM으로 변경하는 것이 아니라면 코드 수정 시 전체 빌드가 필요하다.
-- moduel(m): LKM으로 빌드되어 탈부착 가능해진다.
-- disable(n): 비활성화.
+- built-in(y): Included in the kernel from the start. If not changed to LKM, full build is required when modifying code.
+- module(m): Built as LKM, can be attached and detached.
+- disable(n): Disabled.
 
-또한 LKM을 활성화하고 코드를 동적으로 수정하고 싶다면, menuconfig에서 Loadable Module Support 항목을 확인하자. Enable이면 동적인 모듈 로딩이 가능하다.
+Also, if you want to enable LKM and modify code dynamically, check the Loadable Module Support item in menuconfig. If enabled, dynamic module loading is possible.
 
-그 외에도 방법은 많으니, 각자 편한 방법으로 확인하자.
+There are many other methods, so check them in your preferred way.
 
 ### Module Build
 
-일단 리눅스 커널 소스코드의 `fs/btrfs/` 경로에는 기본적인 btrfs의 vfs 인터페이스에 대한 동작들이 구현되어있다. 관련해서 나는 오늘 write() 작업 실행에 대한 로깅을 추가할 것이기 때문에, `fs/btrfs/file.c`로 들어가준다.
+First, in the Linux kernel source code's `fs/btrfs/` path, the basic operations for BTRFS's VFS interface are implemented. Since I'll be adding logging for write() operations today, I'll go into `fs/btrfs/file.c`.
 
-여기서, 실제로 작업을 하게 되는 함수는 `btrfs_buffered_write()`, `btrfs_do_write_iter()` 등이 있는데, 이걸 알려면 앞서 언급한 ftrace 등의 도구를 통해 함수 추적을 진행하거나, 검색하거나,,,(필자는 검색을 했다)
+Here, the actual functions that perform the work are `btrfs_buffered_write()`, `btrfs_do_write_iter()`, etc. To find these, you can use tools like ftrace mentioned earlier to trace functions, or search for them (I used search).
 
-그리고 커널이 실제로 다양한 버전을 거쳐오고, 여러 호환성을 제공하기 위해서 추상화를 정말 많이 진행해왔기 때문에 실제 함수 호출이 매우 빈번하게 일어난다.
-그러니 뭔가 내가 원하는 동작을 수행할 것 같은 친구라면 해당 함수에 추적기를 달거나 디버깅 코드를 추가하는 식으로 직접 찾아내보는 것도 좋지 않을까 싶다.
+And since the kernel has gone through various versions and provides multiple compatibilities, it has done a lot of abstraction, so function calls happen very frequently.
+So if you find something that seems like it might perform the operation you want, it's good to try adding a tracer or debugging code to that function to find out directly.
 
-아무튼 이렇게 로깅할 함수를 찾았다면 printk() 를 통해서 로그를 남겨주자.
+Anyway, once you've found the function to log, let's add logs using printk().
 
 `fs/btrfs/file.c`
 
@@ -123,7 +121,7 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
 }
 ```
 
-이런 식으로 함수 호출 스택 중간에도 로깅을 남기고,
+In this way, we can add logging in the middle of the function call stack, and
 
 `fs/btrfs/file.c`
 
@@ -141,7 +139,7 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, struct iov_iter *from,
 
         pr_emerg("HELLO WORLD!!!!\n");
 
-        /* 로깅 시작 */
+        /* Start logging */
         if (path_buf) {
             char *path = d_path(&file->f_path, path_buf, PATH_MAX);
             if (!IS_ERR(path)) path_str = path;
@@ -150,26 +148,26 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, struct iov_iter *from,
         ktime_get_real_ts64(&ts);
         printk(KERN_DEBUG "[BTRFS_WRITE] Path: %s, Inode: %llu, Offset: %lld, Time: %lld.%09ld\n",
                path_str,
-               btrfs_ino(BTRFS_I(file_inode(file))),  // Btrfs 전용 inode 번호
+               btrfs_ino(BTRFS_I(file_inode(file))),  // Btrfs specific inode number
                iocb->ki_pos,
                (s64)ts.tv_sec,
                ts.tv_nsec);
 
         printk(KERN_INFO "[BTRFS_WRITE] Path: %s, Inode: %llu, Offset: %lld, Time: %lld.%09ld\n",
                path_str,
-               btrfs_ino(BTRFS_I(file_inode(file))),  // Btrfs 전용 inode 번호
+               btrfs_ino(BTRFS_I(file_inode(file))),  // Btrfs specific inode number
                iocb->ki_pos,
                (s64)ts.tv_sec,
                ts.tv_nsec);
         if (path_buf) kfree(path_buf);
-        /* 로깅 끝 */
-		...
+        /* End logging */
+	...
 };
 ```
 
-이런 식으로 실제 함수 코드 하단에 관련된 정보들을 추가하고자 로깅을 더했다.
+In this way, I've added logging to the bottom of the actual function code to add related information.
 
-또한, 맨 앞단에 다음과 같은 모듈 버전에 대한 명시를 추가해서 내가 수정한 코드가 정확히 빌드되고 반영되는지 확인하자.
+Also, let's add the following module version specification at the very beginning to verify that my modified code is built and reflected correctly.
 
 ```c
 #include <linux/printk.h>
@@ -187,29 +185,29 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, struct iov_iter *from,
 MODULE_VERSION("1.0.3-custom");
 ```
 
-이렇게 하고, 모듈을 새로 빌드한다.
+After this, let's build the module again.
 
-> _기존에 해당 커널은 전체 빌드 및 부트로딩을 마쳤다고 가정한다._
+> _Assume that the kernel has already been fully built and bootloaded._
 
 ```sh
-# 최대 4개의 코어(job)을 수행 가능한 btrfs 모듈을 빌드한다.
+# Build the btrfs module with up to 4 cores (jobs)
 make -j4 M=fs/btrfs
 ```
 
-이후에, 해당 모듈을 설치해준다.
+Then, install the module.
 
 ```sh
 make j4 M=fs/btrfs modules_install
 ```
 
-이제 커널에서 해당 모듈을 설치해주었기 때문에 loadable 한 모듈이 설치됨을 인식했을 것이다.
-해당 모듈이 설치되었는지 확인하자.
+Now that we've installed the module in the kernel, it should recognize that a loadable module has been installed.
+Let's check if the module is installed.
 
 ```sh
 modinfo btrfs | grep version
 ```
 
-결과는 다음과 같이 나온다.
+The result will be as follows.
 
 ```sh
 version:        1.0.3-custom
@@ -217,21 +215,21 @@ srcversion:     1182D3CE6E2E5F34E45378A
 vermagic:       6.13.5.sp SMP preempt mod_unload modversions aarch64
 ```
 
-version에 대한 코드는 내가 추가해주었기 때문에 기존에 없던 것이 추가된 것이다. 내가 표기한 버전과 동일함을 확인하자.
+The version code was added by me, so it's something that didn't exist before. Let's verify that it matches the version I specified.
 
-이후에, 설치된 모듈을 기존 모듈과 바꿔끼는 과정을 거치자.
-이를 위해서는 기존 모듈을 사용하고 있지 않음이 보장되어야한다.
+After this, let's go through the process of replacing the installed module with the existing one.
+For this, it must be guaranteed that the existing module is not in use.
 
-btrfs와 같은 파일 시스템의 경우, 해당 파일시스템을 기반으로 마운트된 디렉토리가 없어야한다.
+For filesystems like btrfs, there should be no directories mounted based on that filesystem.
 
 ```sh
 rmmod btrfs
 insmod btrfs
 ```
 
-LKM은 모듈 삭제와 설치가 쉬운 편이라. 위와 같이 새로운 모듈을 불러와주자.
+LKM makes module removal and installation easy, so let's load the new module as shown above.
 
-이후에 write() 작업이 수행되도록 btrfs 기반의 디렉토리를 마운트해주고, 특정 파일을 새로 쓰게 되면 다음과 같이 dmesg 내에 레벨 7의 로그가 추가된다.
+After this, if you mount a directory based on btrfs and write to a specific file, level 7 logs will be added to dmesg as follows.
 
 ```sh
 dmesg -l 7
@@ -260,6 +258,6 @@ dmesg -l 7
 
 ---
 
-위와 같이 커널 코드를 수정해서 직접 로깅을 추가하고, 관찰가능성을 높일 수 있다.
+From now on, we can improve observability by modifying kernel source code in manual and add logging logics as belows.
 
-사실 처음에는 `make -j4 fs/btrfs modules_install` 이후에 모듈 로딩이 완료된 줄 알고 (버전도 새 버전으로 표기해줌..) 로깅 안 된다고 많이 헤맸는데, 바로잡을 수 있어 다행이다.
+Honestly, I was confused at first because I thought the module was loaded after `make -j4 fs/btrfs modules_install` (and the version was new...), so I didn't log it, but I'm glad I was able to fix that.
