@@ -1,6 +1,6 @@
 baseURL = 'https://plaintexting.com'
 languageCode = 'en-us'
-title = 'Nohv'
+title = 'plaintexting.com'
 theme = 'PaperMod'
 enableRobotsTXT = true
 
