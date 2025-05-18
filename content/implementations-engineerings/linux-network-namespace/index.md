@@ -1,10 +1,8 @@
 +++
-title = 'Linux Network Namespace'
+title = 'VXLAN implementation with Linux Network Namespace'
 date = 2025-05-18T03:45:24+09:00
 draft = false
 +++
-
-#study/computer-networks/vxlan-implementation
 
 > 해당 글은 [Linux Namespaces](https://plaintexting.com/knowledge_base-reviews/linux-namespaces/) 에 대한 연장선상에 있는 Linux Network Namespace에 대한 개념을 기반으로 하여, 다중 호스트 간 통신 구현까지 넓은 범위의 내용을 다룹니다. 따라서 명시적인 글의 분류와 실 내용에 차이가 있을 수 있습니다.
 
