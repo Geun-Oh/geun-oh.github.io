@@ -65,7 +65,7 @@ enableRobotsTXT = true
     url = "https://medium.com/@geunoh"
   [[params.socialIcons]]
     name = "cv"
-    url = "https://drive.google.com/file/d/1qwHOTQBxNqdS-RQHdzXeJzqAHjvaU7XY/view?usp=drive_link"
+    url = "https://drive.google.com/file/d/1P6TS6WL9yYbahjPWsUccQt_PZQ6WFL94/view?usp=sharing"
 
   env = "production"
 
