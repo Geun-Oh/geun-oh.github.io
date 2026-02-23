@@ -48,8 +48,23 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Restore Mermaid SVG cache
+        id: mermaid_svg_cache_restore
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/mermaid-svg
+          key: mermaid-svg-${{ runner.os }}-v1-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            mermaid-svg-${{ runner.os }}-v1-${{ github.ref_name }}-
+            mermaid-svg-${{ runner.os }}-v1-
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+      - name: Install Mermaid CLI
+        run: npm install --no-save @mermaid-js/mermaid-cli@11
       - name: Build with Hugo
         env:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
@@ -60,6 +75,14 @@ jobs:
             --gc \
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"          
+      - name: Inline Mermaid SVG in built HTML
+        run: node scripts/inline-mermaid-svg.mjs public
+      - name: Save Mermaid SVG cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/mermaid-svg
+          key: mermaid-svg-${{ runner.os }}-v1-${{ github.ref_name }}-${{ github.sha }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
