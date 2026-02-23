@@ -1,0 +1,6 @@
+{{- if eq .Type "mermaid" -}}
+{{- .Page.Store.Set "hasMermaid" true -}}
+<pre class="mermaid">{{- .Inner | strings.TrimSpace | htmlEscape -}}</pre>
+{{- else -}}
+{{- transform.HighlightCodeBlock . -}}
+{{- end -}}
