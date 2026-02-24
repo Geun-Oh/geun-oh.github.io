@@ -4,8 +4,6 @@ date = 2026-02-23T23:30:26+09:00
 draft = false
 +++
 
-# Zig TLS 1.3 Implementation from Scratch
-
 This article covers the full implementation of a Zig TLS library designed to make TLS termination easy to integrate into any Zig project, primarily for my other project [zproxy](https://github.com/Geun-Oh/zproxy).
 
 The full codebase is available [here](https://github.com/Geun-Oh/zigtls).
