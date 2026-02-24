@@ -435,7 +435,7 @@ Parsing is split into two layers.
 
 TLS record-header parsing
 
-```
+```zig
 // src/tls13/record.zig
 pub const ParseError = error{
     IncompleteHeader, // buffer < 5 Bytes
